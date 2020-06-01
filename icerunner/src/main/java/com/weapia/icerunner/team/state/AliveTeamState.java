@@ -19,12 +19,12 @@ public class AliveTeamState extends BaseTeamState {
 
     @Override
     public void onJoin(Team team, UUID uuid) {
-
+        super.onJoin(team, uuid);
     }
 
     @Override
     public void onQuit(Team team, UUID uuid) {
-
+        super.onQuit(team, uuid);
     }
 
 }
