@@ -94,7 +94,7 @@ public class GameState extends EventGameState {
         Optional<Team> teamOptional = teamManager.getByMemberUUID(player.getUniqueId());
         if (teamOptional.isPresent()) {
             MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
-            player.teleport(minigameTeam.getSpawn());
+            event.setRespawnLocation(minigameTeam.getSpawn());
         }
     }
 
