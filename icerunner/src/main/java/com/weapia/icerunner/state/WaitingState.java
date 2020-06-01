@@ -21,8 +21,6 @@ public class WaitingState extends BaseWaitingState {
     private TeamManager teamManager;
     @Inject
     private AliveTeamState aliveTeamState;
-    @Inject @InjectConfig
-    private WorldConfiguration worldConfiguration;
 
     @Inject
     public WaitingState(GameState gameState) {
