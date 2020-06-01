@@ -1,3 +1,4 @@
 name: IceRunner
 main: com.weapia.icerunner.IceRunner
 version: 1.0
+depend: [ProtocolLib]
