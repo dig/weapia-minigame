@@ -97,13 +97,18 @@ public class PreGameState extends BasePreGameState {
     }
 
     @Override
-    public boolean canTakeDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause) {
+    public boolean canTakeEntityDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause) {
         return !(instigator instanceof Player);
     }
 
     @Override
-    public boolean canDealDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause) {
+    public boolean canDealEntityDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause) {
         return true;
+    }
+
+    @Override
+    public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
+        return false;
     }
 
     @EventHandler
