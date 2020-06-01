@@ -73,7 +73,6 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-
     }
 
     @Override
@@ -82,6 +81,7 @@ public class GameState extends EventGameState {
 
     @Override
     public void onDeath(PlayerDeathEvent event) {
+
     }
 
     @Override
@@ -120,6 +120,16 @@ public class GameState extends EventGameState {
 
     @Override
     public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
+        if (instigator.getHealth() <= finalDamage) {
+            Optional<Team> teamOptional = teamManager.getByMemberUUID(instigator.getUniqueId());
+            if (teamOptional.isPresent()) {
+                MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
+                instigator.teleport(minigameTeam.getSpawn());
+
+                return false;
+            }
+        }
+
         return true;
     }
 

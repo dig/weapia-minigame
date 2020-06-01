@@ -9,12 +9,10 @@ public class AliveTeamState extends BaseTeamState {
 
     @Override
     public void start(Team team, BaseTeamState previous) {
-
     }
 
     @Override
     public void stop(Team team, BaseTeamState next) {
-
     }
 
     @Override
