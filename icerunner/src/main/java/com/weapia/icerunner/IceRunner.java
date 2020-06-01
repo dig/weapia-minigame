@@ -1,5 +1,6 @@
 package com.weapia.icerunner;
 
+import com.weapia.icerunner.state.WaitingState;
 import net.sunken.common.server.Server;
 import net.sunken.core.Core;
 import net.sunken.core.engine.EngineManager;
@@ -15,7 +16,7 @@ public class IceRunner extends Core {
         EngineManager engineManager = injector.getInstance(EngineManager.class);
         engineManager.setGameMode(GameMode.builder()
                 .isStateTicking(true)
-                // .initialState(() -> injector.getInstance(WaitingState.class))
+                .initialState(() -> injector.getInstance(WaitingState.class))
                 .build());
 
         //--- Change state to open
