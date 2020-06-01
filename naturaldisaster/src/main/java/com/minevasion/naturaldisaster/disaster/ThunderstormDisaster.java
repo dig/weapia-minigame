@@ -35,7 +35,7 @@ public class ThunderstormDisaster extends BaseDisaster {
 
             //--- Remove block after strike
             Block blockToRemove = locationToStrike.getBlock();
-            if (blockToRemove != null && blockToRemove.getType() != Material.WATER && blockToRemove.getType() != Material.STATIONARY_WATER)
+            if (blockToRemove != null && blockToRemove.getType() != Material.WATER)
                 blockToRemove.setType(Material.AIR);
         }
     }

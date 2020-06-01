@@ -49,7 +49,7 @@ public class AcidRainDisaster extends BaseDisaster {
             locationToRemove.setY(locationToRemove.getWorld().getHighestBlockYAt(locationToRemove) - 1);
             Block blockToRemove = locationToRemove.getBlock();
 
-            if (blockToRemove != null && blockToRemove.getType() != Material.WATER && blockToRemove.getType() != Material.STATIONARY_WATER)
+            if (blockToRemove != null && blockToRemove.getType() != Material.WATER && blockToRemove.getType() != Material.WATER)
                 blockToRemove.setType(Material.AIR);
         }
     }

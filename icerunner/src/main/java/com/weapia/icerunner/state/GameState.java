@@ -33,7 +33,7 @@ public class GameState extends EventGameState {
         worldConfiguration = loadConfig(String.format("config/world/%s.conf", pluginInform.getServer().getWorld().toString()), WorldConfiguration.class);
 
         Queue<MinigameTeam> teams = new LinkedList<>();
-        for (ChatColor )
+        // todo
         teamManager.assignOnlinePlayers(teams);
     }
 

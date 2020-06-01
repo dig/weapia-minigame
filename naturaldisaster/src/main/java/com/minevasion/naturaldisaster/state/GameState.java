@@ -123,7 +123,6 @@ public class GameState extends EventGameState {
 
                     switch (material) {
                         case WATER:
-                        case STATIONARY_WATER:
                             player.damage(2.0);
                             break;
                     }

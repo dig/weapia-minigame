@@ -7,7 +7,6 @@ import net.sunken.common.server.Game;
 import net.sunken.core.engine.state.PlayerSpectatorState;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
-import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.ScoreboardWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,7 +33,7 @@ public class GameState extends EventGameState {
             for (PotionEffect potionEffect : player.getActivePotionEffects())
                 player.removePotionEffect(potionEffect.getType());
 
-            player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_LAUNCH, 0.7F, 0F);
+            player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_SHOOT, 0.7F, 0F);
         });
 
         Bukkit.broadcastMessage(com.minevasion.spacegames.Constants.GAME_START);

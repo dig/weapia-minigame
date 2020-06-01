@@ -73,7 +73,7 @@ public class FlashFloodingDisaster extends BaseDisaster {
                     for (double x = minPosX; x <= maxPosX; x++) {
                         for (double z = minPosZ; z <= maxPosZ; z++) {
                             Block block = new Location(Bukkit.getWorld("map"), x, currentLevel, z).getBlock();
-                            if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) block.setType(Material.AIR);
+                            if (block.getType() == Material.WATER) block.setType(Material.AIR);
                         }
                     }
 
