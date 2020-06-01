@@ -35,7 +35,7 @@ public class WaitingState extends BaseWaitingState {
     public void stop(BaseGameState next) {
         super.stop(next);
 
-        teamManager.setTeamConfigMapper(teamSingleConfiguration -> new MinigameTeam(teamSingleConfiguration.getColour(), teamSingleConfiguration.getMaxPlayers(), aliveTeamState));
+        teamManager.setTeamConfigMapper(teamSingleConfiguration -> new MinigameTeam(teamSingleConfiguration.getColour(), teamSingleConfiguration.getDisplayName(), teamSingleConfiguration.getMaxPlayers(), aliveTeamState));
         teamManager.allocateTeams();
     }
 
