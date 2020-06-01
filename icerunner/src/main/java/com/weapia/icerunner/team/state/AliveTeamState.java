@@ -7,25 +7,23 @@ import java.util.UUID;
 
 public class AliveTeamState extends BaseTeamState {
 
-    public AliveTeamState(Team team) {
-        super(team);
-    }
-
     @Override
-    public void start(BaseTeamState previous) {
-    }
-
-    @Override
-    public void stop(BaseTeamState next) {
-    }
-
-    @Override
-    public void onJoin(UUID uuid) {
+    public void start(Team team, BaseTeamState previous) {
 
     }
 
     @Override
-    public void onQuit(UUID uuid) {
+    public void stop(Team team, BaseTeamState next) {
+
+    }
+
+    @Override
+    public void onJoin(Team team, UUID uuid) {
+
+    }
+
+    @Override
+    public void onQuit(Team team, UUID uuid) {
 
     }
 

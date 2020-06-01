@@ -7,8 +7,8 @@ import org.bukkit.ChatColor;
 
 public class MinigameTeam extends Team {
 
-    public MinigameTeam(@NonNull ChatColor colour, int maxPlayers) {
-        super(colour, maxPlayers, null);
+    public MinigameTeam(@NonNull ChatColor colour, int maxPlayers, BaseTeamState baseTeamState) {
+        super(colour, maxPlayers, baseTeamState);
     }
 
 }
