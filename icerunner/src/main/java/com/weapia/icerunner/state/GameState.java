@@ -30,10 +30,9 @@ import java.util.Queue;
 
 public class GameState extends EventGameState {
 
-    @Inject @InjectConfig
-    private WorldConfiguration worldConfiguration;
     @Inject
     private TeamManager teamManager;
+    private WorldConfiguration worldConfiguration;
 
     @Override
     public void start(BaseGameState previous) {
