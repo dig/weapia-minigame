@@ -21,20 +21,11 @@ import java.util.*;
 
 public class GameState extends EventGameState {
 
-    @Inject
-    private TeamManager teamManager;
-    @Inject @InjectConfig
-    private TeamConfiguration teamConfiguration;
-
     private WorldConfiguration worldConfiguration;
 
     @Override
     public void start(BaseGameState previous) {
         worldConfiguration = loadConfig(String.format("config/world/%s.conf", pluginInform.getServer().getWorld().toString()), WorldConfiguration.class);
-
-        Queue<MinigameTeam> teams = new LinkedList<>();
-        // todo
-        teamManager.assignOnlinePlayers(teams);
     }
 
     @Override
