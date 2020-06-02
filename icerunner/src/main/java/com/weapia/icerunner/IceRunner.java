@@ -1,5 +1,6 @@
 package com.weapia.icerunner;
 
+import com.weapia.icerunner.player.MinigamePlayerFactory;
 import com.weapia.icerunner.state.WaitingState;
 import net.sunken.common.server.Server;
 import net.sunken.core.Core;
@@ -12,14 +13,15 @@ public class IceRunner extends Core {
     public void onEnable() {
         super.onEnable(new IceRunnerPluginModule(this));
 
-        //--- Engine
         EngineManager engineManager = injector.getInstance(EngineManager.class);
+        MinigamePlayerFactory minigamePlayerFactory = injector.getInstance(MinigamePlayerFactory.class);
+
         engineManager.setGameMode(GameMode.builder()
                 .isStateTicking(true)
                 .initialState(() -> injector.getInstance(WaitingState.class))
+                .playerMapper(uuidStringTuple -> minigamePlayerFactory.createPlayer(uuidStringTuple.getX(), uuidStringTuple.getY()))
                 .build());
 
-        //--- Change state to open
         pluginInform.setState(Server.State.OPEN);
     }
 
