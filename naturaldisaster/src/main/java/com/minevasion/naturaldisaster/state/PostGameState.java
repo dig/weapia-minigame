@@ -65,7 +65,6 @@ public class PostGameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-        setState(player.getUniqueId(), new PlayerSpectatorState(player));
     }
 
     @Override
@@ -74,7 +73,6 @@ public class PostGameState extends EventGameState {
 
     @Override
     public void onDeath(PlayerDeathEvent event) {
-        setState(event.getEntity().getUniqueId(), new PlayerSpectatorState(event.getEntity()));
     }
 
     @Override

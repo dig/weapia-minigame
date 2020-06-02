@@ -46,7 +46,6 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-        setState(player.getUniqueId(), new PlayerSpectatorState(player));
     }
 
     @Override
@@ -60,7 +59,6 @@ public class GameState extends EventGameState {
         player.getLocation().getWorld().strikeLightningEffect(player.getLocation());
 
         event.getDrops().clear();
-        setState(player.getUniqueId(), new PlayerSpectatorState(player));
     }
 
     @Override
