@@ -5,8 +5,6 @@
 rootProject.name = 'weapia-minigame'
 
 include(':icerunner')
-include(':spacegames')
-include('naturaldisaster')
 
 include(':common')
 include(':core')
