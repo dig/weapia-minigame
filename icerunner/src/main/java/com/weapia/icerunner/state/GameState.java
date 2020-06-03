@@ -5,6 +5,8 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.weapia.icerunner.config.WorldConfiguration;
 import com.weapia.icerunner.team.MinigameTeam;
+import net.minecraft.server.v1_15_R1.DataWatcherObject;
+import net.minecraft.server.v1_15_R1.DataWatcherRegistry;
 import net.sunken.core.config.LocationConfiguration;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
@@ -13,15 +15,13 @@ import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
@@ -157,7 +157,11 @@ public class GameState extends EventGameState {
         if (event.getEntityType() == EntityType.SNOWBALL) {
             activeProjectiles.remove(event.getEntity());
         } else if (event.getEntityType() == EntityType.ARROW) {
-            event.getEntity().remove();
+            if (event.getHitEntity() instanceof Player) {
+                Player target = (Player) event.getHitEntity();
+                CraftPlayer craftPlayer = (CraftPlayer) target;
+                craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(10, DataWatcherRegistry.b), 0);
+            }
         }
     }
 
@@ -168,6 +172,13 @@ public class GameState extends EventGameState {
 
     @EventHandler
     public void onPlayerPickup(PlayerPickupArrowEvent event) {
+        event.getArrow().remove();
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFoodLevelChange(FoodLevelChangeEvent event) {
+        event.setFoodLevel(15);
         event.setCancelled(true);
     }
 
