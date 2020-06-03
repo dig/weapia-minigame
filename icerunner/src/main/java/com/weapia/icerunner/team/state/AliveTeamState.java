@@ -50,7 +50,9 @@ public class AliveTeamState extends BaseTeamState {
 
             ItemStack bow = itemRegistry.getItem("bow").get().toItemStack();
             inventory.setItem(0, bow);
-            inventory.setItem(17, new ItemStack(Material.ARROW));
+
+            ItemStack arrow = itemRegistry.getItem("arrow").get().toItemStack();
+            inventory.setItem(17, arrow);
 
             ItemStack snowball = itemRegistry.getItem("snowball").get().toItemStack();
             inventory.setItem(1, snowball);
