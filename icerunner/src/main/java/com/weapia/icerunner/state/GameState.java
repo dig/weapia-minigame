@@ -1,38 +1,41 @@
 package com.weapia.icerunner.state;
 
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.weapia.icerunner.config.WorldConfiguration;
 import com.weapia.icerunner.team.MinigameTeam;
-import net.sunken.common.config.InjectConfig;
-import net.sunken.common.player.packet.PlayerRequestServerPacket;
-import net.sunken.common.server.Server;
-import net.sunken.core.Constants;
 import net.sunken.core.config.LocationConfiguration;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
+import net.sunken.core.item.ItemRegistry;
 import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 
 public class GameState extends EventGameState {
 
     @Inject
     private TeamManager teamManager;
+
     private WorldConfiguration worldConfiguration;
+    private Set<Projectile> activeProjectiles = Sets.newHashSet();
+    private Queue<Location> nextTickIcePlace = Queues.newLinkedBlockingQueue();
 
     @Override
     public void start(BaseGameState previous) {
@@ -69,6 +72,16 @@ public class GameState extends EventGameState {
 
     @Override
     public void tick(int tickCount) {
+        while (!nextTickIcePlace.isEmpty()) {
+            Location location = nextTickIcePlace.poll();
+            World world = location.getWorld();
+            Block block = world.getBlockAt(location);
+            block.setType(Material.ICE);
+        }
+
+        if (activeProjectiles.size() > 0) {
+            activeProjectiles.forEach(projectile -> nextTickIcePlace.add(projectile.getLocation().subtract(0, 2, 0)));
+        }
     }
 
     @Override
@@ -124,6 +137,7 @@ public class GameState extends EventGameState {
             Optional<Team> teamOptional = teamManager.getByMemberUUID(instigator.getUniqueId());
             if (teamOptional.isPresent()) {
                 MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
+                instigator.setHealth(20.0);
                 instigator.teleport(minigameTeam.getSpawn());
 
                 return false;
@@ -131,6 +145,23 @@ public class GameState extends EventGameState {
         }
 
         return true;
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        if (event.getEntityType() == EntityType.SNOWBALL) {
+            activeProjectiles.add(event.getEntity());
+        }
+    }
+
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        activeProjectiles.remove(event.getEntity());
     }
 
 }
