@@ -27,7 +27,6 @@ public class ItemSnowball extends AnItemListener {
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (cooldowns.canProceed(COOLDOWN_KEY, player.getUniqueId())) {
-                log.info(String.format("cooldown : %d", anItem.getAttributes().getInt("cooldown")));
                 cooldowns.create(COOLDOWN_KEY, player.getUniqueId(), System.currentTimeMillis() + anItem.getAttributes().getInt("cooldown"));
                 player.launchProjectile(Snowball.class);
             }

@@ -24,6 +24,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
 
@@ -50,19 +51,12 @@ public class GameState extends EventGameState {
             MinigameTeam minigameTeam = (MinigameTeam) team;
             Location next = spawns.poll();
             minigameTeam.setSpawn(next);
-        });
 
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.setGameMode(GameMode.SURVIVAL);
-            player.getInventory().clear();
-
-            for (PotionEffect potionEffect : player.getActivePotionEffects())
-                player.removePotionEffect(potionEffect.getType());
-
-            Optional<Team> teamOptional = teamManager.getByMemberUUID(player.getUniqueId());
-            if (teamOptional.isPresent()) {
-                MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
-                player.teleport(minigameTeam.getSpawn());
+            for (UUID uuid : minigameTeam.getMembers()) {
+                Player target = Bukkit.getPlayer(uuid);
+                if (target != null) {
+                    target.teleport(next);
+                }
             }
         });
     }
@@ -160,11 +154,20 @@ public class GameState extends EventGameState {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        activeProjectiles.remove(event.getEntity());
+        if (event.getEntityType() == EntityType.SNOWBALL) {
+            activeProjectiles.remove(event.getEntity());
+        } else if (event.getEntityType() == EntityType.ARROW) {
+            event.getEntity().remove();
+        }
     }
 
     @EventHandler
     public void onPlayerDrop(PlayerDropItemEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerPickup(PlayerPickupArrowEvent event) {
         event.setCancelled(true);
     }
 

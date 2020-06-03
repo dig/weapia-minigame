@@ -36,11 +36,8 @@ public class AliveTeamState extends BaseTeamState {
         super.onJoin(team, uuid);
 
         Player player = Bukkit.getPlayer(uuid);
-        MinigameTeam minigameTeam = (MinigameTeam) team;
-
         if (player != null) {
             player.setGameMode(GameMode.SURVIVAL);
-            player.teleport(minigameTeam.getSpawn());
 
             for (PotionEffect potionEffect : player.getActivePotionEffects())
                 player.removePotionEffect(potionEffect.getType());
