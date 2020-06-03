@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
@@ -52,8 +53,8 @@ public class GameState extends EventGameState {
         });
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.getInventory().clear();
             player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
 
             for (PotionEffect potionEffect : player.getActivePotionEffects())
                 player.removePotionEffect(potionEffect.getType());
@@ -97,15 +98,13 @@ public class GameState extends EventGameState {
 
     @Override
     public void onDeath(PlayerDeathEvent event) {
-
+        handleDeath(event.getEntity());
     }
 
     @Override
     public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-
-        for (PotionEffect potionEffect : player.getActivePotionEffects())
-            player.removePotionEffect(potionEffect.getType());
+        handleDeath(player);
 
         Optional<Team> teamOptional = teamManager.getByMemberUUID(player.getUniqueId());
         if (teamOptional.isPresent()) {
@@ -116,7 +115,7 @@ public class GameState extends EventGameState {
 
     @Override
     public boolean canBreak(Player player, Block block) {
-        return false;
+        return block.getType() == Material.ICE;
     }
 
     @Override
@@ -137,14 +136,8 @@ public class GameState extends EventGameState {
     @Override
     public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
         if (instigator.getHealth() <= finalDamage) {
-            Optional<Team> teamOptional = teamManager.getByMemberUUID(instigator.getUniqueId());
-            if (teamOptional.isPresent()) {
-                MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
-                instigator.setHealth(20.0);
-                instigator.teleport(minigameTeam.getSpawn());
-
-                return false;
-            }
+            handleDeath(instigator);
+            return false;
         }
 
         return true;
@@ -154,12 +147,7 @@ public class GameState extends EventGameState {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (player.getLocation().getY() <= 0) {
-            Optional<Team> teamOptional = teamManager.getByMemberUUID(player.getUniqueId());
-            if (teamOptional.isPresent()) {
-                MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
-                player.setHealth(20.0);
-                player.teleport(minigameTeam.getSpawn());
-            }
+            handleDeath(player);
         }
     }
 
@@ -173,6 +161,24 @@ public class GameState extends EventGameState {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         activeProjectiles.remove(event.getEntity());
+    }
+
+    @EventHandler
+    public void onPlayerDrop(PlayerDropItemEvent event) {
+        event.setCancelled(true);
+    }
+
+    private void handleDeath(Player player) {
+        Optional<Team> teamOptional = teamManager.getByMemberUUID(player.getUniqueId());
+        if (teamOptional.isPresent()) {
+            MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
+
+            for (PotionEffect potionEffect : player.getActivePotionEffects())
+                player.removePotionEffect(potionEffect.getType());
+
+            player.setHealth(20.0);
+            player.teleport(minigameTeam.getSpawn());
+        }
     }
 
 }
