@@ -156,12 +156,6 @@ public class GameState extends EventGameState {
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntityType() == EntityType.SNOWBALL) {
             activeProjectiles.remove(event.getEntity());
-        } else if (event.getEntityType() == EntityType.ARROW) {
-            if (event.getHitEntity() instanceof Player) {
-                Player target = (Player) event.getHitEntity();
-                CraftPlayer craftPlayer = (CraftPlayer) target;
-                craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(10, DataWatcherRegistry.b), 0);
-            }
         }
     }
 
