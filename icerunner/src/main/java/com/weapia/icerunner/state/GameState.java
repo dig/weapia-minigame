@@ -76,7 +76,10 @@ public class GameState extends EventGameState {
             Location location = nextTickIcePlace.poll();
             World world = location.getWorld();
             Block block = world.getBlockAt(location);
-            block.setType(Material.ICE);
+
+            if (block.getType() == Material.AIR) {
+                block.setType(Material.ICE);
+            }
         }
 
         if (activeProjectiles.size() > 0) {
@@ -150,6 +153,14 @@ public class GameState extends EventGameState {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        if (player.getLocation().getY() <= 0) {
+            Optional<Team> teamOptional = teamManager.getByMemberUUID(player.getUniqueId());
+            if (teamOptional.isPresent()) {
+                MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
+                player.setHealth(20.0);
+                player.teleport(minigameTeam.getSpawn());
+            }
+        }
     }
 
     @EventHandler
