@@ -5,17 +5,14 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.weapia.icerunner.config.WorldConfiguration;
 import com.weapia.icerunner.team.MinigameTeam;
-import net.minecraft.server.v1_15_R1.DataWatcherObject;
-import net.minecraft.server.v1_15_R1.DataWatcherRegistry;
-import net.sunken.core.config.LocationConfiguration;
+import com.weapia.icerunner.team.state.AliveTeamState;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
-import net.sunken.core.item.ItemRegistry;
+import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -32,8 +29,14 @@ import java.util.*;
 
 public class GameState extends EventGameState {
 
+    private static final String SCOREBOARD_KEY = "Game";
+
     @Inject
     private TeamManager teamManager;
+    @Inject
+    private ScoreboardRegistry scoreboardRegistry;
+    @Inject
+    private PostGameState postGameState;
 
     private WorldConfiguration worldConfiguration;
     private Set<Projectile> activeProjectiles = Sets.newHashSet();
@@ -44,9 +47,7 @@ public class GameState extends EventGameState {
         worldConfiguration = loadConfig(String.format("config/world/%s.conf", pluginInform.getServer().getWorld().toString()), WorldConfiguration.class);
 
         Queue<Location> spawns = new LinkedList<>();
-        for (LocationConfiguration locationConfiguration : worldConfiguration.getSpawns())
-            spawns.add(locationConfiguration.toLocation());
-
+        worldConfiguration.getSpawns().forEach(locationConfiguration -> spawns.add(locationConfiguration.toLocation()));
         teamManager.getTeamsList().forEach(team -> {
             MinigameTeam minigameTeam = (MinigameTeam) team;
             Location next = spawns.poll();
@@ -59,6 +60,9 @@ public class GameState extends EventGameState {
                 }
             }
         });
+
+        // CustomScoreboard scoreboard = new CustomScoreboard("");
+        // scoreboardRegistry.register(SCOREBOARD_KEY, scoreboard);
     }
 
     @Override
@@ -79,6 +83,14 @@ public class GameState extends EventGameState {
 
         if (activeProjectiles.size() > 0) {
             activeProjectiles.forEach(projectile -> nextTickIcePlace.add(projectile.getLocation().subtract(0, 2, 0)));
+        }
+
+        // end game if we have only 1 team left
+        if (tickCount % 20 == 0) {
+            Set<Team> aliveTeams = teamManager.hasState(AliveTeamState.class);
+            if (aliveTeams.size() <= 1) {
+                engineManager.setState(postGameState);
+            }
         }
     }
 

@@ -5,19 +5,20 @@ import net.sunken.core.config.LocationConfiguration;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-import java.util.List;
-
 @Getter
 @ConfigSerializable
-public class WorldConfiguration {
+public class CaptureConfiguration {
 
     @Setting
-    private List<LocationConfiguration> spawns;
+    private String displayName;
 
     @Setting
-    private double scoreToWin;
+    private double scorePerTick;
 
     @Setting
-    private List<CaptureConfiguration> capturePoints;
+    private LocationConfiguration min;
+
+    @Setting
+    private LocationConfiguration max;
 
 }

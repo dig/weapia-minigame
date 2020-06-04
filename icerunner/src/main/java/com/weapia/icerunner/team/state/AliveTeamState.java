@@ -1,33 +1,28 @@
 package com.weapia.icerunner.team.state;
 
 import com.google.inject.Inject;
-import com.weapia.icerunner.team.MinigameTeam;
-import net.minecraft.server.v1_15_R1.DataWatcherObject;
-import net.minecraft.server.v1_15_R1.DataWatcherRegistry;
 import net.sunken.core.engine.state.impl.BaseTeamState;
-import net.sunken.core.inventory.ItemBuilder;
 import net.sunken.core.item.ItemRegistry;
 import net.sunken.core.team.impl.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class AliveTeamState extends BaseTeamState {
 
     @Inject
     private ItemRegistry itemRegistry;
+    @Inject
+    private DeadTeamState deadTeamState;
 
     @Override
     public void start(Team team, BaseTeamState previous) {
+        team.getMembers().forEach(uuid -> onJoin(team, uuid));
     }
 
     @Override
@@ -64,6 +59,9 @@ public class AliveTeamState extends BaseTeamState {
     @Override
     public void onQuit(Team team, UUID uuid) {
         super.onQuit(team, uuid);
+        if (team.getMembers().size() <= 0) {
+            team.setState(deadTeamState);
+        }
     }
 
 }
