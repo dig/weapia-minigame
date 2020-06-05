@@ -62,7 +62,7 @@ public class PostGameState extends BasePostGameState {
                     " ",
                     ChatColor.AQUA + "" + ChatColor.BOLD + " ICE RUNNER",
                     ChatColor.YELLOW + " We have a winner! Team " + winningTeam.getColour() + "" + ChatColor.BOLD + winningTeam.getDisplayName(),
-                    ChatColor.YELLOW + " " + teamMembers,
+                    ChatColor.YELLOW + " Members: " + teamMembers,
                     " ",
                     ChatColor.GOLD + "" + ChatColor.BOLD + " Click here " + ChatColor.GREEN + "to join a new game",
                     " "
