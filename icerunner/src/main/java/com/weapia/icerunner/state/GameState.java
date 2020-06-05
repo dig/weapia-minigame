@@ -48,7 +48,6 @@ public class GameState extends EventGameState {
 
     private Set<Projectile> activeProjectiles = Sets.newHashSet();
     private Queue<Location> nextTickIcePlace = Queues.newLinkedBlockingQueue();
-
     private Set<CapturePoint> capturePoints = Sets.newHashSet();
 
     @Override
