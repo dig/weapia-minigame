@@ -112,6 +112,11 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
+        Optional<CustomScoreboard> scoreboardOptional = scoreboardRegistry.get(SCOREBOARD_KEY);
+        if (scoreboardOptional.isPresent()) {
+            CustomScoreboard scoreboard = scoreboardOptional.get();
+            scoreboard.add(player);
+        }
     }
 
     @Override
