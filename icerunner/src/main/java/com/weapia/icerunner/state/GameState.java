@@ -9,6 +9,7 @@ import com.weapia.icerunner.team.MinigameTeam;
 import com.weapia.icerunner.team.state.AliveTeamState;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
+import net.sunken.core.scoreboard.CustomScoreboard;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
@@ -72,8 +73,14 @@ public class GameState extends EventGameState {
             capturePoints.add(capturePoint);
         });
 
-        // CustomScoreboard scoreboard = new CustomScoreboard("");
-        // scoreboardRegistry.register(SCOREBOARD_KEY, scoreboard);
+        CustomScoreboard scoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
+        scoreboard.createEntry("Todo", "yah still need to do this", 69);
+
+        scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 1);
+        scoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
+
+        Bukkit.getOnlinePlayers().forEach(scoreboard::add);
+        scoreboardRegistry.register(SCOREBOARD_KEY, scoreboard);
     }
 
     @Override

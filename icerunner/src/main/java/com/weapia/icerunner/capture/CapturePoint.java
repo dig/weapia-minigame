@@ -54,15 +54,13 @@ public class CapturePoint {
                 if (teamOptional.isPresent()) {
                     MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();
                     minigameTeam.addScore(scorePerTick * 20);
-                    Bukkit.broadcastMessage(minigameTeam.getDisplayName() + ": " + minigameTeam.getScore() + "");
-
                     if (teamlastCaptured == null || (teamlastCaptured != null && !teamlastCaptured.equals(minigameTeam.getId()))) {
-                        Bukkit.broadcastMessage(String.format(minigameTeam.getColour() + Constants.CAPTURE_POINT_CAPTURED, minigameTeam.getDisplayName(), displayName));
+                        Bukkit.broadcastMessage(String.format(Constants.CAPTURE_POINT_CAPTURED, displayName, minigameTeam.getColour(), minigameTeam.getDisplayName()));
                     }
                 }
             } else if (contestants.size() > 1 && teamlastCaptured != null) {
                 Bukkit.broadcastMessage(String.format(Constants.CAPTURE_POINT_CONTESTED, displayName));
-            } else if (wasCaptured) {
+            } else if (contestants.size() <= 0 && wasCaptured) {
                 Bukkit.broadcastMessage(String.format(Constants.CAPTURE_POINT_EMPTY, displayName));
             }
         }
