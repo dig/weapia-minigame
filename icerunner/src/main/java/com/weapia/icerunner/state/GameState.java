@@ -15,6 +15,7 @@ import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
 import net.sunken.core.util.Cuboid;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -76,7 +77,8 @@ public class GameState extends EventGameState {
         CustomScoreboard scoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
         scoreboard.createEntry("Todo", "yah still need to do this", 69);
 
-        scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 1);
+        scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
+        scoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
         scoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
         Bukkit.getOnlinePlayers().forEach(scoreboard::add);
@@ -217,7 +219,7 @@ public class GameState extends EventGameState {
             for (PotionEffect potionEffect : player.getActivePotionEffects())
                 player.removePotionEffect(potionEffect.getType());
 
-            player.setHealth(20.0);
+            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
             player.teleport(minigameTeam.getSpawn());
         }
     }

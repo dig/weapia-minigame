@@ -6,6 +6,7 @@ import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ public class PostGameState extends EventGameState {
 
     @Override
     public void start(BaseGameState previous) {
+        Bukkit.broadcastMessage("END OF GAME");
     }
 
     @Override
