@@ -1,7 +1,7 @@
 package com.weapia.icerunner;
 
 import com.weapia.icerunner.player.MinigamePlayerFactory;
-import com.weapia.icerunner.state.WaitingState;
+import com.weapia.icerunner.state.PreGameState;
 import net.sunken.common.server.Server;
 import net.sunken.core.Core;
 import net.sunken.core.engine.EngineManager;
@@ -18,7 +18,7 @@ public class IceRunner extends Core {
 
         engineManager.setGameMode(GameMode.builder()
                 .isStateTicking(true)
-                .initialState(() -> injector.getInstance(WaitingState.class))
+                .initialState(() -> injector.getInstance(PreGameState.class))
                 .playerMapper(uuidStringTuple -> minigamePlayerFactory.createPlayer(uuidStringTuple.getX(), uuidStringTuple.getY()))
                 .build());
 

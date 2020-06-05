@@ -78,7 +78,7 @@ public class GameState extends EventGameState {
 
         CustomScoreboard scoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
         scoreboard.createEntry("Spacer1", ChatColor.BLACK + " ", teamManager.getTeamsList().size() + 2 + 2);
-        
+
         int i = 0;
         for (Team team : teamManager.getTeamsList()) {
             i++;
