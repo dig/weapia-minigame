@@ -82,7 +82,7 @@ public class GameState extends EventGameState {
         for (Team team : teamManager.getTeamsList()) {
             i++;
             MinigameTeam minigameTeam = (MinigameTeam) team;
-            scoreboard.createEntry(team.getId(), minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + Math.round(minigameTeam.getScore()), 2 + i);
+            scoreboard.createEntry(team.getId(), minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + "" + ChatColor.BOLD + Math.round(minigameTeam.getScore()), 2 + i);
         }
 
         scoreboard.createEntry("Spacer2", ChatColor.YELLOW + " ", 2);
@@ -227,7 +227,7 @@ public class GameState extends EventGameState {
         Optional<CustomScoreboard> scoreboardOptional = scoreboardRegistry.get(SCOREBOARD_KEY);
         if (scoreboardOptional.isPresent()) {
             CustomScoreboard scoreboard = scoreboardOptional.get();
-            scoreboard.getEntry(minigameTeam.getId()).update(minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + total);
+            scoreboard.getEntry(minigameTeam.getId()).update(minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + "" + ChatColor.BOLD + Math.round(minigameTeam.getScore()));
         }
 
         if (total >= worldConfiguration.getScoreToWin()) {
