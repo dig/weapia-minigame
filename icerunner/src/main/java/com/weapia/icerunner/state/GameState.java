@@ -6,7 +6,9 @@ import com.google.inject.Inject;
 import com.weapia.icerunner.capture.CapturePoint;
 import com.weapia.icerunner.config.WorldConfiguration;
 import com.weapia.icerunner.team.MinigameTeam;
+import com.weapia.icerunner.team.event.TeamScoreAddEvent;
 import com.weapia.icerunner.team.state.AliveTeamState;
+import net.sunken.common.event.ListensToEvent;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.scoreboard.CustomScoreboard;
@@ -75,9 +77,16 @@ public class GameState extends EventGameState {
         });
 
         CustomScoreboard scoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
-        scoreboard.createEntry("Todo", "yah still need to do this", 69);
+        scoreboard.createEntry("Spacer1", ChatColor.BLACK + " ", teamManager.getTeamsList().size() + 2 + 2);
+        
+        int i = 0;
+        for (Team team : teamManager.getTeamsList()) {
+            i++;
+            MinigameTeam minigameTeam = (MinigameTeam) team;
+            scoreboard.createEntry(team.getId(), minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + Math.round(minigameTeam.getScore()), 2 + i);
+        }
 
-        scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
+        scoreboard.createEntry("Spacer2", ChatColor.YELLOW + " ", 2);
         scoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
         scoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
@@ -209,6 +218,22 @@ public class GameState extends EventGameState {
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
         event.setFoodLevel(15);
         event.setCancelled(true);
+    }
+
+    @ListensToEvent
+    public void onTeamScoreAdd(TeamScoreAddEvent event) {
+        MinigameTeam minigameTeam = event.getTeam();
+        long total = Math.round(event.getTotal());
+
+        Optional<CustomScoreboard> scoreboardOptional = scoreboardRegistry.get(SCOREBOARD_KEY);
+        if (scoreboardOptional.isPresent()) {
+            CustomScoreboard scoreboard = scoreboardOptional.get();
+            scoreboard.getEntry(minigameTeam.getId()).update(minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + total);
+        }
+
+        if (total >= worldConfiguration.getScoreToWin()) {
+            engineManager.setState(postGameState);
+        }
     }
 
     private void handleDeath(Player player) {

@@ -3,6 +3,7 @@ package com.weapia.icerunner.state;
 import com.google.inject.Inject;
 import com.weapia.icerunner.config.WorldConfiguration;
 import com.weapia.icerunner.team.MinigameTeam;
+import com.weapia.icerunner.team.MinigameTeamFactory;
 import com.weapia.icerunner.team.state.AliveTeamState;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.core.config.LocationConfiguration;
@@ -21,6 +22,8 @@ public class WaitingState extends BaseWaitingState {
     private TeamManager teamManager;
     @Inject
     private AliveTeamState aliveTeamState;
+    @Inject
+    private MinigameTeamFactory minigameTeamFactory;
 
     @Inject
     public WaitingState(GameState gameState) {
@@ -37,7 +40,7 @@ public class WaitingState extends BaseWaitingState {
     public void stop(BaseGameState next) {
         super.stop(next);
 
-        teamManager.setTeamConfigMapper(teamSingleConfiguration -> new MinigameTeam(teamSingleConfiguration.getId(), teamSingleConfiguration.getColour(), teamSingleConfiguration.getDisplayName(), teamSingleConfiguration.getMaxPlayers(), aliveTeamState));
+        teamManager.setTeamConfigMapper(teamSingleConfiguration -> minigameTeamFactory.createTeam(teamSingleConfiguration.getId(), teamSingleConfiguration.getColour(), teamSingleConfiguration.getDisplayName(), teamSingleConfiguration.getMaxPlayers(), aliveTeamState));
         teamManager.allocateTeams();
     }
 
