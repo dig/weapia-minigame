@@ -3,6 +3,7 @@ package com.weapia.icerunner.state;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.weapia.icerunner.capture.CapturePoint;
 import com.weapia.icerunner.config.WorldConfiguration;
 import com.weapia.icerunner.team.MinigameTeam;
 import com.weapia.icerunner.team.state.AliveTeamState;
@@ -11,6 +12,7 @@ import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
+import net.sunken.core.util.Cuboid;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -39,8 +41,11 @@ public class GameState extends EventGameState {
     private PostGameState postGameState;
 
     private WorldConfiguration worldConfiguration;
+
     private Set<Projectile> activeProjectiles = Sets.newHashSet();
     private Queue<Location> nextTickIcePlace = Queues.newLinkedBlockingQueue();
+
+    private Set<CapturePoint> capturePoints = Sets.newHashSet();
 
     @Override
     public void start(BaseGameState previous) {
@@ -59,6 +64,12 @@ public class GameState extends EventGameState {
                     target.teleport(next);
                 }
             }
+        });
+
+        worldConfiguration.getCapturePoints().forEach(captureConfiguration -> {
+            Cuboid cuboid = new Cuboid(captureConfiguration.getMin().toLocation(), captureConfiguration.getMax().toLocation());
+            CapturePoint capturePoint = new CapturePoint(captureConfiguration.getDisplayName(), cuboid, captureConfiguration.getScorePerTick(), teamManager);
+            capturePoints.add(capturePoint);
         });
 
         // CustomScoreboard scoreboard = new CustomScoreboard("");
@@ -81,14 +92,12 @@ public class GameState extends EventGameState {
             }
         }
 
-        if (activeProjectiles.size() > 0) {
-            activeProjectiles.forEach(projectile -> nextTickIcePlace.add(projectile.getLocation().subtract(0, 2, 0)));
-        }
+        activeProjectiles.forEach(projectile -> nextTickIcePlace.add(projectile.getLocation().subtract(0, 2, 0)));
+        capturePoints.forEach(capturePoint -> capturePoint.tick(tickCount));
 
-        // end game if we have only 1 team left
         if (tickCount % 20 == 0) {
             Set<Team> aliveTeams = teamManager.hasState(AliveTeamState.class);
-            if (aliveTeams.size() <= 1) {
+            if (aliveTeams.size() <= 1) { // end game if we have only 1 team left
                 engineManager.setState(postGameState);
             }
         }

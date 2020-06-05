@@ -13,16 +13,16 @@ public class MinigameTeam extends Team {
     @Getter @Setter
     private Location spawn;
     @Getter
-    private double points;
+    private double score;
 
-    public MinigameTeam(@NonNull ChatColor colour, @NonNull String displayName, int maxPlayers, BaseTeamState baseTeamState) {
-        super(colour, displayName, maxPlayers, baseTeamState);
+    public MinigameTeam(@NonNull String id, @NonNull ChatColor colour, @NonNull String displayName, int maxPlayers, BaseTeamState baseTeamState) {
+        super(id, colour, displayName, maxPlayers, baseTeamState);
         this.spawn = null;
-        this.points = 0;
+        this.score = 0;
     }
 
-    public void addPoints(double amount) {
-        points += amount;
+    public void addScore(double amount) {
+        score += amount;
     }
 
 }

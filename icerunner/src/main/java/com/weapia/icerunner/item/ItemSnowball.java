@@ -1,6 +1,7 @@
 package com.weapia.icerunner.item;
 
 import com.google.inject.Inject;
+import com.weapia.icerunner.Constants;
 import lombok.extern.java.Log;
 import net.sunken.common.util.cooldown.Cooldowns;
 import net.sunken.core.item.impl.AnItem;
@@ -29,6 +30,8 @@ public class ItemSnowball extends AnItemListener {
             if (cooldowns.canProceed(COOLDOWN_KEY, player.getUniqueId())) {
                 cooldowns.create(COOLDOWN_KEY, player.getUniqueId(), System.currentTimeMillis() + anItem.getAttributes().getInt("cooldown"));
                 player.launchProjectile(Snowball.class);
+            } else {
+                player.sendMessage(Constants.SNOWBALL_COOLDOWN);
             }
         }
     }
