@@ -4,6 +4,7 @@ import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.weapia.icerunner.capture.CapturePoint;
+import com.weapia.icerunner.config.FillConfiguration;
 import com.weapia.icerunner.config.WorldConfiguration;
 import com.weapia.icerunner.team.MinigameTeam;
 import com.weapia.icerunner.team.event.TeamScoreAddEvent;
@@ -71,7 +72,11 @@ public class GameState extends EventGameState {
 
         worldConfiguration.getCapturePoints().forEach(captureConfiguration -> {
             Cuboid cuboid = new Cuboid(captureConfiguration.getMin().toLocation(), captureConfiguration.getMax().toLocation());
-            CapturePoint capturePoint = new CapturePoint(captureConfiguration.getDisplayName(), cuboid, captureConfiguration.getScorePerTick(), teamManager);
+
+            FillConfiguration fillConfiguration = captureConfiguration.getFill();
+            Cuboid fill = new Cuboid(fillConfiguration.getMin().toLocation(), fillConfiguration.getMax().toLocation());
+
+            CapturePoint capturePoint = new CapturePoint(captureConfiguration.getDisplayName(), cuboid, fill, fillConfiguration.getDefaultType(), captureConfiguration.getScorePerTick(), teamManager);
             capturePoints.add(capturePoint);
         });
 

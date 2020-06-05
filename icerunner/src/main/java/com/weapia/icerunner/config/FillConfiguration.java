@@ -4,24 +4,19 @@ import lombok.Getter;
 import net.sunken.core.config.LocationConfiguration;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.bukkit.Material;
 
 @Getter
 @ConfigSerializable
-public class CaptureConfiguration {
+public class FillConfiguration {
 
     @Setting
-    private String displayName;
-
-    @Setting
-    private double scorePerTick;
+    private Material defaultType;
 
     @Setting
     private LocationConfiguration min;
 
     @Setting
     private LocationConfiguration max;
-
-    @Setting
-    private FillConfiguration fill;
 
 }
