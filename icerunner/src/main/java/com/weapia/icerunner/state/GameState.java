@@ -232,7 +232,7 @@ public class GameState extends EventGameState {
         Optional<CustomScoreboard> scoreboardOptional = scoreboardRegistry.get(SCOREBOARD_KEY);
         if (scoreboardOptional.isPresent()) {
             CustomScoreboard scoreboard = scoreboardOptional.get();
-            scoreboard.getEntry(minigameTeam.getId()).update(minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + Math.round(minigameTeam.getScore()));
+            scoreboard.getEntry(minigameTeam.getId()).update(minigameTeam.getColour() + "\u25A0 " + ChatColor.BOLD + minigameTeam.getDisplayName() + " " + ChatColor.WHITE + total);
         }
 
         if (total >= worldConfiguration.getScoreToWin()) {
