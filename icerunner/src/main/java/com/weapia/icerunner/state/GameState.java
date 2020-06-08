@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
@@ -222,6 +223,15 @@ public class GameState extends EventGameState {
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
         event.setFoodLevel(15);
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onWeatherChange(WeatherChangeEvent event) {
+        if (event.toWeatherState()) {
+            event.setCancelled(true);
+            event.getWorld().setWeatherDuration(0);
+            event.getWorld().setThundering(false);
+        }
     }
 
     @ListensToEvent
