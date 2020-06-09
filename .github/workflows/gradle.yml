@@ -18,10 +18,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Move all files into weapia-minigame
-      run: |
-        mkdir -p weapia-minigame
-        mv !(weapia-minigame) weapia-minigame
+    - name: Checkout weapia-minigame
+      uses: actions/checkout@v2
+      with:
+        path: weapia-minigame
     - name: Checkout weapia-main
       uses: actions/checkout@v2
       with:
