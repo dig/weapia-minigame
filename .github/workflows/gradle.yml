@@ -36,7 +36,7 @@ jobs:
       run: |
         cd weapia-minigame
         chmod +x gradlew
-        ./gradlew build
+        ./gradlew build --build-cache --daemon --configure-on-demand --parallel
     - name: Upload built jars
       uses: actions/upload-artifact@v2
       with:
