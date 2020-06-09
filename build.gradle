@@ -23,6 +23,8 @@ subprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "http://repo.dmulloy2.net/nexus/repository/public/" }
         maven { url 'https://repo.spongepowered.org/maven' }
+        maven { url 'https://repo.ashcon.app/nexus/content/repositories/snapshots/' }
+        maven { url 'https://repo.codemc.org/repository/maven-public/' }
         maven {
             url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
 
