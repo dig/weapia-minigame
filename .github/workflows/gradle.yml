@@ -22,3 +22,25 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Upload built jars
+      uses: actions/upload-artifact@v2
+      with:
+        name: jars
+        path: bin/*.jar
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+    - name: Download built jars
+      uses: actions/download-artifact@v2
+      with:
+        name: jars
+    - name: Create directory
+      run: |
+        mkdir -p ~/static/instance000a/plugins/
+    - name: Move jars
+      run: |
+        mv bin/icerunner-1.0-SNAPSHOT.jar ~/static/instance000a/plugins
+    - name: Restart servers
+      run: |
+        tmux send-keys -t instance000a "stop" ENTER
