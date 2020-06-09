@@ -18,6 +18,17 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Move all files into weapia-minigame
+      run: |
+        mkdir -p weapia-minigame
+        mv !(weapia-minigame) weapia-minigame
+    - name: Checkout weapia-main
+      uses: actions/checkout@v2
+      with:
+        repository: dig/weapia-main
+        path: weapia-main
+    - name: Move into weapia-minigame
+      run: cd weapia-minigame
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
