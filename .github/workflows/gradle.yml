@@ -32,6 +32,7 @@ jobs:
         repository: dig/weapia-main
         path: weapia-main
         ref: develop
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Move into weapia-minigame
       run: cd weapia-minigame
     - name: Grant execute permission for gradlew
