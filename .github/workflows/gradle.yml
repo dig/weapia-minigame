@@ -19,7 +19,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Clean directory
-      run: rm *
+      run: rm -r *
     - name: Checkout weapia-minigame
       uses: actions/checkout@v2
       with:
