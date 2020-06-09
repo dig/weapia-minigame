@@ -18,6 +18,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Clean directory
+      run: rm *
     - name: Checkout weapia-minigame
       uses: actions/checkout@v2
       with:
@@ -30,21 +32,15 @@ jobs:
         path: weapia-main
         ref: develop
         token: ${{ secrets.WEAPIA_PAT }}
-    - name: Output test 1
-      run: ls
-    - name: Move into weapia-minigame
-      run: cd weapia-minigame
-    - name: Output test 2
-      run: ls
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x ./weapia-minigame/gradlew
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./weapia-minigame/gradlew build
     - name: Upload built jars
       uses: actions/upload-artifact@v2
       with:
         name: jars
-        path: bin/*.jar
+        path: weapia-minigame/bin/*.jar
   deploy:
     runs-on: self-hosted
     needs: build
