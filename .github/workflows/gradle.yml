@@ -32,10 +32,11 @@ jobs:
         path: weapia-main
         ref: develop
         token: ${{ secrets.WEAPIA_PAT }}
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./weapia-minigame/gradlew
     - name: Build with Gradle
-      run: ./weapia-minigame/gradlew build
+      run: |
+        cd weapia-minigame
+        chmod +x gradlew
+        ./gradlew build
     - name: Upload built jars
       uses: actions/upload-artifact@v2
       with:
@@ -54,7 +55,7 @@ jobs:
         mkdir -p ~/static/instance000a/plugins/
     - name: Move jars
       run: |
-        mv bin/icerunner-1.0-SNAPSHOT.jar ~/static/instance000a/plugins
+        mv weapia-minigame/bin/icerunner-1.0-SNAPSHOT.jar ~/static/instance000a/plugins
     - name: Restart servers
       run: |
         tmux send-keys -t instance000a "stop" ENTER
