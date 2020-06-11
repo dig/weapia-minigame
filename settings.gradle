@@ -5,6 +5,7 @@
 rootProject.name = 'weapia-minigame'
 
 include(':icerunner')
+include(':orewars')
 
 include(':common')
 include(':core')

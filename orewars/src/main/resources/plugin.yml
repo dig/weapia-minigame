@@ -1,0 +1,5 @@
+name: OreWars
+main: com.weapia.orewars.OreWars
+version: 1.0
+depend: [ProtocolLib]
+api-version: 1.15
