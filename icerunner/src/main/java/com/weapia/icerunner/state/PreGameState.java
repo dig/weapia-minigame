@@ -31,7 +31,6 @@ public class PreGameState extends BasePreGameState {
     @Override
     public void stop(BaseGameState next) {
         super.stop(next);
-
         teamManager.setTeamConfigMapper(teamSingleConfiguration -> minigameTeamFactory.createTeam(teamSingleConfiguration.getId(), teamSingleConfiguration.getColour(), teamSingleConfiguration.getDisplayName(), teamSingleConfiguration.getMaxPlayers(), aliveTeamState));
         teamManager.allocateTeams();
     }
