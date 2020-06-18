@@ -36,6 +36,10 @@ public class PostGameState extends BasePostGameState {
         Set<Team> aliveTeams = teamManager.hasState(AliveTeamState.class);
         Optional<MinigameTeam> winningTeamOptional = Optional.empty();
 
+        if (aliveTeams.size() == 1) {
+            winningTeamOptional = Optional.ofNullable((MinigameTeam) aliveTeams.iterator().next());
+        }
+
         for (Team team : aliveTeams) {
             MinigameTeam minigameTeam = (MinigameTeam) team;
             if (minigameTeam.getScore() >= worldConfiguration.getScoreToWin()) {
