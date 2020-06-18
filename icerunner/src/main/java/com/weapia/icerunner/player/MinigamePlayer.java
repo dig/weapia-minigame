@@ -11,14 +11,4 @@ public class MinigamePlayer extends CorePlayer {
         super(uuid, username, scoreboardRegistry);
     }
 
-    @Override
-    public boolean load() {
-        return true;
-    }
-
-    @Override
-    public boolean save() {
-        return true;
-    }
-
 }
