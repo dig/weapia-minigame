@@ -1,6 +1,6 @@
 package com.weapia.icerunner;
 
-import com.weapia.icerunner.player.MinigamePlayerFactory;
+import net.sunken.core.player.simple.MinigamePlayerFactory;
 import com.weapia.icerunner.state.PreGameState;
 import net.sunken.common.server.Server;
 import net.sunken.core.Core;
