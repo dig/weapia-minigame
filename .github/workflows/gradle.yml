@@ -53,9 +53,12 @@ jobs:
     - name: Create directory
       run: |
         mkdir -p ~/static/instance000a/plugins/
+        mkdir -p ~/static/instance001a/plugins/
     - name: Move jars
       run: |
         mv weapia-minigame/bin/icerunner-1.0-SNAPSHOT.jar ~/static/instance000a/plugins
+        mv weapia-minigame/bin/survivalrealms-1.0-SNAPSHOT.jar ~/static/instance001a/plugins
     - name: Restart servers
       run: |
         tmux send-keys -t instance000a "stop" ENTER
+        tmux send-keys -t instance001a "stop" ENTER
