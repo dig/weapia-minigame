@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms;
 
+import com.weapia.survivalrealms.state.GameState;
 import net.sunken.common.server.Server;
 import net.sunken.core.Core;
 import net.sunken.core.engine.EngineManager;
@@ -17,7 +18,7 @@ public class SurvivalRealms extends Core {
 
         engineManager.setGameMode(GameMode.builder()
                 .isStateTicking(true)
-                // .initialState(() -> injector.getInstance(PreGameState.class))
+                .initialState(() -> injector.getInstance(GameState.class))
                 .playerMapper(uuidStringTuple -> minigamePlayerFactory.createPlayer(uuidStringTuple.getX(), uuidStringTuple.getY()))
                 .build());
 
