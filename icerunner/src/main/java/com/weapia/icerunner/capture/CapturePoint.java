@@ -54,7 +54,7 @@ public class CapturePoint {
             }
 
             if (contestants.size() == 1) {
-                Optional<Team> teamOptional = teamManager.getById(contestants.get(0));
+                Optional<Team> teamOptional = teamManager.get(contestants.get(0));
 
                 if (teamOptional.isPresent()) {
                     MinigameTeam minigameTeam = (MinigameTeam) teamOptional.get();

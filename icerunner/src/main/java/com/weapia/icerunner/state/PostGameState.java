@@ -9,7 +9,6 @@ import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.BasePostGameState;
 import net.sunken.core.team.TeamManager;
 import net.sunken.core.team.impl.Team;
-import net.sunken.core.util.ColourUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -56,8 +55,7 @@ public class PostGameState extends BasePostGameState {
                 Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
                 if (abstractPlayerOptional.isPresent()) {
                     AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
-                    String name = ColourUtil.fromColourCode(abstractPlayer.getRank().getColourCode()) + abstractPlayer.getUsername();
-
+                    String name = ChatColor.valueOf(abstractPlayer.getRank().getColour()) + abstractPlayer.getUsername();
                     teamMembers += teamMembers == "" ? name : ", " + name;
                 }
             }
