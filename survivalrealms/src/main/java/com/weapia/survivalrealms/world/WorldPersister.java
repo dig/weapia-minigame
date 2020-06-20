@@ -31,7 +31,7 @@ public class WorldPersister {
 //    }
 
     private GridFSFindIterable findWorlds(UUID playerUUID) {
-        return worldBucket.find(eq("playerUUID", playerUUID.toString()));
+        return worldBucket.find(eq("metadata.playerUUID", playerUUID.toString()));
     }
 
     private GridFSFile getLatestWorld(GridFSFindIterable worlds) {
