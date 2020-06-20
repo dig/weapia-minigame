@@ -34,6 +34,7 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
+        // TODO: check if player has a world loaded here, if so tp to that
         player.teleport(worldConfiguration.getSpawn().toLocation());
     }
 

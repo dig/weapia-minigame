@@ -1,7 +1,9 @@
 package com.weapia.survivalrealms;
 
+import com.weapia.survivalrealms.command.SpawnCommand;
 import com.weapia.survivalrealms.config.WorldConfiguration;
 import net.sunken.common.config.ConfigModule;
+import net.sunken.common.inject.PluginFacetBinder;
 import net.sunken.core.CoreModule;
 import net.sunken.core.engine.EngineModule;
 import net.sunken.core.inject.PluginModule;
@@ -21,6 +23,9 @@ public class SurvivalRealmsPluginModule extends PluginModule {
 
         install(new CoreModule());
         install(new EngineModule());
+
+        final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
+        pluginFacetBinder.addBinding(SpawnCommand.class);
     }
 
 }
