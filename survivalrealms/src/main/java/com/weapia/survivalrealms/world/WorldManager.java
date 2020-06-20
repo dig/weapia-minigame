@@ -1,7 +1,6 @@
 package com.weapia.survivalrealms.world;
 
 import net.sunken.common.inject.*;
-import net.sunken.common.server.World;
 import net.sunken.core.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -44,6 +43,9 @@ public class WorldManager implements Facet, Enableable, Listener {
     }
 
     private void loadWorld(Player player) {
+        World world = new WorldCreator(player.getUniqueId().toString())
+                .createWorld();
+        loadedWorlds.put(player.getUniqueId(), world);
     }
 
     private boolean checkScheduledUnloadWorld(Player player) {
@@ -68,6 +70,8 @@ public class WorldManager implements Facet, Enableable, Listener {
     }
 
     private void unloadWorld(UUID playerUUID) {
+        World world = loadedWorlds.remove(playerUUID);
+        // save the world
     }
 
     private void unloadAllWorlds() {
