@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.world;
 
+import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.config.*;
 import lombok.extern.java.*;
 import net.sunken.common.config.*;
@@ -147,7 +148,10 @@ public class WorldManager implements Facet, Enableable, Listener {
         if (worldToUnload != null) {
             // teleport all players to local spawn
             worldToUnload.getPlayers()
-                    .forEach(player -> player.teleport(worldConfiguration.getSpawn().toLocation()));
+                    .forEach(player -> {
+                        player.sendMessage(Constants.WORLD_UNLOAD);
+                        player.teleport(worldConfiguration.getSpawn().toLocation());
+                    });
 
             if (Bukkit.unloadWorld(worldToUnload, true)) {
                 worldPersister.persistWorld(playerUUID, worldToUnload.getWorldFolder());
