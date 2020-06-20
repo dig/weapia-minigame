@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms;
 
+import com.weapia.survivalrealms.command.AdventureCommand;
 import com.weapia.survivalrealms.command.SpawnCommand;
 import com.weapia.survivalrealms.config.WorldConfiguration;
 import net.sunken.common.config.ConfigModule;
@@ -26,5 +27,6 @@ public class SurvivalRealmsPluginModule extends PluginModule {
 
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(SpawnCommand.class);
+        pluginFacetBinder.addBinding(AdventureCommand.class);
     }
 }

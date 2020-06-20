@@ -34,8 +34,11 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-        // TODO: check if player has a world loaded here, if so tp to that
-        player.teleport(worldConfiguration.getSpawn().toLocation());
+        if (worldConfiguration.isAdventure()) {
+            // TODO: random teleport in world border
+        } else {
+            player.teleport(worldConfiguration.getSpawn().toLocation());
+        }
     }
 
     @Override
@@ -50,12 +53,16 @@ public class GameState extends EventGameState {
 
     @Override
     public void onRespawn(PlayerRespawnEvent event) {
-        event.setRespawnLocation(worldConfiguration.getSpawn().toLocation());
+        if (worldConfiguration.isAdventure()) {
+            // TODO: random teleport in world border
+        } else {
+            event.setRespawnLocation(worldConfiguration.getSpawn().toLocation());
+        }
     }
 
     @Override
     public boolean canBreak(Player player, Block block) {
-        return player.getWorld().getName().equals(player.getUniqueId().toString());
+        return worldConfiguration.isAdventure() || player.getWorld().getName().equals(player.getUniqueId().toString());
     }
 
     @Override
@@ -75,6 +82,6 @@ public class GameState extends EventGameState {
 
     @Override
     public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
-        return instigator.getWorld().getName().equals(instigator.getUniqueId().toString());
+        return instigator.getWorld().getName().equals(instigator.getUniqueId().toString()) || worldConfiguration.isAdventure();
     }
 }

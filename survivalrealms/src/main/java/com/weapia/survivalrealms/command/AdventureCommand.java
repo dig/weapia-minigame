@@ -16,8 +16,8 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Optional;
 
-@Command(aliases = {"spawn"}, cooldown = 500L)
-public class SpawnCommand extends BukkitCommand {
+@Command(aliases = {"adventure", "mining", "mine", "resource"}, cooldown = 500L)
+public class AdventureCommand extends BukkitCommand {
 
     @Inject
     private PacketUtil packetUtil;
@@ -26,15 +26,9 @@ public class SpawnCommand extends BukkitCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
-        if (abstractPlayerOptional.isPresent()) {
+        if (abstractPlayerOptional.isPresent() && !worldConfiguration.isAdventure()) {
             SurvivalPlayer survivalPlayer = (SurvivalPlayer) abstractPlayerOptional.get();
-
-            if (worldConfiguration.isAdventure()) {
-                AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(survivalPlayer.getUuid(), Server.Type.INSTANCE, Game.SURVIVAL_REALMS, true)));
-            } else {
-                survivalPlayer.toPlayer().ifPresent(player -> player.teleport(worldConfiguration.getSpawn().toLocation()));
-            }
-            return true;
+            AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(survivalPlayer.getUuid(), Server.Type.INSTANCE, Game.SURVIVAL_REALMS_ADVENTURE, true)));
         }
         return false;
     }

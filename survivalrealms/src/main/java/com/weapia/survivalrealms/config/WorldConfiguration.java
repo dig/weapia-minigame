@@ -10,6 +10,9 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class WorldConfiguration {
 
     @Setting
+    private boolean adventure;
+
+    @Setting
     private LocationConfiguration spawn;
 
 }
