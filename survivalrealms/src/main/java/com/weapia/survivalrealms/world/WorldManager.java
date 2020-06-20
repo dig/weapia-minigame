@@ -19,11 +19,11 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     private static final long UNLOAD_AFTER_TICKS_OFFLINE = Ticks.from(1, TimeUnit.MINUTES);
 
-    @Inject
-    private JavaPlugin plugin;
-
     private final Map<UUID, World> loadedWorlds = new HashMap<>();
     private final Map<UUID, BukkitTask> scheduledUnloadWorlds = new HashMap<>();
+
+    @Inject
+    private JavaPlugin plugin;
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
