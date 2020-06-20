@@ -7,7 +7,6 @@ import com.mongodb.client.gridfs.model.*;
 import net.sunken.common.database.*;
 import net.sunken.common.util.*;
 import org.bson.*;
-import org.bukkit.entity.*;
 
 import java.io.*;
 import java.util.*;
@@ -45,8 +44,8 @@ public class WorldPersister {
 
     public void persistWorld(UUID playerUUID, File worldFolder) throws IOException {
         GridFSFindIterable worlds = findWorlds(playerUUID);
-        int latestVersion = getVersion(getLatestWorld(worlds));
-        int newVersion = latestVersion + 1;
+        GridFSFile latestWorld = getLatestWorld(worlds);
+        int newVersion = latestWorld == null ? 0 : getVersion(latestWorld) + 1;
 
         String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
