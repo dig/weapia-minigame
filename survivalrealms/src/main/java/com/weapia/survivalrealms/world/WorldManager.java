@@ -108,10 +108,10 @@ public class WorldManager implements Facet, Enableable, Listener {
         log.info(String.format("Loading world for %s", player.getName()));
         worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
 
-        // loadingWorlds.add(player.getUniqueId());
-        // World world = new WorldCreator(player.getUniqueId().toString())
-        //        .createWorld();
-        // loadedWorlds.put(player.getUniqueId(), world);
+        loadingWorlds.add(player.getUniqueId());
+        World world = new WorldCreator(player.getUniqueId().toString())
+                .createWorld();
+        loadedWorlds.put(player.getUniqueId(), world);
     }
 
     private boolean isUnloadWorldScheduled(Player player) {
