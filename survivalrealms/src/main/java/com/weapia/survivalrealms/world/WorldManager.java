@@ -106,8 +106,7 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     private void loadWorld(Player player) throws IOException {
         log.info(String.format("Loading world for %s", player.getName()));
-        // worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
-        log.info(plugin.getServer().getWorldContainer().getPath());
+        worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
 
         loadingWorlds.add(player.getUniqueId());
         World world = new WorldCreator(player.getUniqueId().toString())
@@ -128,6 +127,7 @@ public class WorldManager implements Facet, Enableable, Listener {
                     log.severe(String.format("Unable to unload world (%s)", player.getUniqueId()));
                 }
             }
+            unscheduleUnloadWorld(player);
         }, UNLOAD_AFTER_TICKS_OFFLINE);
         scheduledUnloadWorlds.put(player.getUniqueId(), unloadWorldTask);
     }
