@@ -1,6 +1,8 @@
 package com.weapia.survivalrealms.world;
 
+import com.weapia.survivalrealms.config.WorldConfiguration;
 import lombok.extern.java.*;
+import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.*;
 import net.sunken.core.util.*;
 import org.bukkit.*;
@@ -18,6 +20,9 @@ import java.util.concurrent.*;
 @Singleton
 public class WorldManager implements Facet, Enableable, Listener {
 
+    @Inject @InjectConfig
+    private WorldConfiguration worldConfiguration;
+
     private static final long UNLOAD_AFTER_TICKS_OFFLINE = Ticks.from(1, TimeUnit.MINUTES);
 
     private final Map<UUID, World> loadedWorlds = new HashMap<>();
@@ -29,19 +34,21 @@ public class WorldManager implements Facet, Enableable, Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-
-        if (checkScheduledUnloadWorld(player)) {
-            unscheduleUnloadWorld(player);
-        } else {
-            loadWorld(player);
+        if (!worldConfiguration.isAdventure()) {
+            if (checkScheduledUnloadWorld(player)) {
+                unscheduleUnloadWorld(player);
+            } else {
+                loadWorld(player);
+            }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-
-        scheduleUnloadWorld(player);
+        if (!worldConfiguration.isAdventure()) {
+            scheduleUnloadWorld(player);
+        }
     }
 
     private void loadWorld(Player player) {
