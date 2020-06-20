@@ -106,7 +106,8 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     private void loadWorld(Player player) throws IOException {
         log.info(String.format("Loading world for %s", player.getName()));
-        worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
+        // worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
+        log.info(plugin.getServer().getWorldContainer().getPath());
 
         loadingWorlds.add(player.getUniqueId());
         World world = new WorldCreator(player.getUniqueId().toString())
