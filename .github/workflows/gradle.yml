@@ -59,7 +59,7 @@ jobs:
       run: |
         mv weapia-minigame/bin/icerunner-1.0-SNAPSHOT.jar ~/static/instance000a/plugins
         mv weapia-minigame/bin/survivalrealms-1.0-SNAPSHOT.jar ~/static/instance001a/plugins
-        mv weapia-minigame/bin/survivalrealms-adventure-1.0-SNAPSHOT.jar ~/static/instance002a/plugins
+        mv weapia-minigame/bin/survivalrealms-1.0-SNAPSHOT.jar ~/static/instance002a/plugins
     - name: Restart servers
       run: |
         tmux send-keys -t instance000a "stop" ENTER

@@ -1,5 +1,0 @@
-name: SurvivalRealmsAdventure
-main: com.weapia.survivalrealms.adventure.RealmsAdventure
-version: 1.0
-depend: [ProtocolLib]
-api-version: 1.15
