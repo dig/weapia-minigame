@@ -49,7 +49,7 @@ public class WorldPersister {
         int newVersion = latestVersion + 1;
 
         String worldFileName = playerUUID.toString();
-        String worldZipPath = worldFolder.getParent() + File.separator + worldFileName;
+        String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
 
