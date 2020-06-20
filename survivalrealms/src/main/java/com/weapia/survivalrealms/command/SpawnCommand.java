@@ -28,7 +28,6 @@ public class SpawnCommand extends BukkitCommand {
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
         if (abstractPlayerOptional.isPresent()) {
             SurvivalPlayer survivalPlayer = (SurvivalPlayer) abstractPlayerOptional.get();
-
             if (worldConfiguration.isAdventure()) {
                 AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(survivalPlayer.getUuid(), Server.Type.INSTANCE, Game.SURVIVAL_REALMS, true)));
             } else {
