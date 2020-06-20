@@ -9,6 +9,7 @@ import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.*;
 import org.bukkit.plugin.java.*;
 import org.bukkit.scheduler.*;
 
@@ -48,6 +49,22 @@ public class WorldManager implements Facet, Enableable, Listener {
         Player player = event.getPlayer();
         if (!worldConfiguration.isAdventure()) {
             scheduleUnloadWorld(player);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onWorldLoad(WorldLoadEvent event) {
+        World loadedWorld = event.getWorld();
+
+        for (Map.Entry<UUID, World> loadedWorldEntry : loadedWorlds.entrySet()) {
+            if (loadedWorldEntry.getValue().equals(loadedWorld)) {
+                Player player = Bukkit.getPlayer(loadedWorldEntry.getKey());
+                if (player != null) {
+                    player.teleport(loadedWorld.getSpawnLocation());
+                }
+
+                break;
+            }
         }
     }
 
