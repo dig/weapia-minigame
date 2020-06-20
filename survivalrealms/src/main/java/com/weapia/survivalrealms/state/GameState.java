@@ -34,7 +34,7 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-
+        player.teleport(worldConfiguration.getSpawn().toLocation());
     }
 
     @Override
@@ -49,7 +49,7 @@ public class GameState extends EventGameState {
 
     @Override
     public void onRespawn(PlayerRespawnEvent event) {
-
+        event.setRespawnLocation(worldConfiguration.getSpawn().toLocation());
     }
 
     @Override
