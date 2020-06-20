@@ -48,6 +48,7 @@ public class WorldManager implements Facet, Enableable, Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+
         if (!worldConfiguration.isAdventure()) {
             scheduleUnloadWorld(player);
         }
@@ -56,14 +57,20 @@ public class WorldManager implements Facet, Enableable, Listener {
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         World newlyLoadedWorld = event.getWorld();
-        UUID playerWhoLoadedUUID = UUID.fromString(newlyLoadedWorld.getName());
+        UUID playerUUID = null;
+        try {
+            playerUUID = UUID.fromString(newlyLoadedWorld.getName());
+        } catch (IllegalArgumentException ignored) {
+            return;
+        }
 
-        if (loadedWorlds.containsKey(playerWhoLoadedUUID)) {
-            Player player = Bukkit.getPlayer(playerWhoLoadedUUID);
+        if (loadedWorlds.containsKey(playerUUID)) {
+            Player player = Bukkit.getPlayer(playerUUID);
             if (player != null) {
                 player.teleport(newlyLoadedWorld.getSpawnLocation());
             }
         }
+
     }
 
     private void loadWorld(Player player) {
