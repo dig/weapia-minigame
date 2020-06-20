@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms;
 
+import com.weapia.survivalrealms.chat.ChatHandler;
 import com.weapia.survivalrealms.command.AdventureCommand;
 import com.weapia.survivalrealms.command.SpawnCommand;
 import com.weapia.survivalrealms.config.WorldConfiguration;
@@ -26,6 +27,7 @@ public class SurvivalRealmsPluginModule extends PluginModule {
         install(new EngineModule());
 
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
+        pluginFacetBinder.addBinding(ChatHandler.class);
         pluginFacetBinder.addBinding(SpawnCommand.class);
         pluginFacetBinder.addBinding(AdventureCommand.class);
     }
