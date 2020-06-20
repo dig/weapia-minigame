@@ -21,6 +21,8 @@ import java.util.concurrent.*;
 @Singleton
 public class WorldManager implements Facet, Enableable, Listener {
 
+    @Inject
+    private JavaPlugin plugin;
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
 
@@ -29,9 +31,6 @@ public class WorldManager implements Facet, Enableable, Listener {
     private final Set<UUID> loadingWorlds = new HashSet<>();
     private final Map<UUID, World> loadedWorlds = new HashMap<>();
     private final Map<UUID, BukkitTask> scheduledUnloadWorlds = new HashMap<>();
-
-    @Inject
-    private JavaPlugin plugin;
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -62,17 +61,17 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     @EventHandler
     public void onWorldInit(WorldInitEvent event) {
-        World world = event.getWorld();
+        World loadingWorld = event.getWorld();
 
         UUID playerUUID;
         try {
-            playerUUID = UUID.fromString(world.getName());
+            playerUUID = UUID.fromString(loadingWorld.getName());
         } catch (IllegalArgumentException e) {
             return;
         }
         if (loadingWorlds.contains(playerUUID)) {
-            world.setAutoSave(true);
-            world.setKeepSpawnInMemory(false);
+            loadingWorld.setAutoSave(true);
+            loadingWorld.setKeepSpawnInMemory(false);
         }
     }
 
@@ -132,7 +131,8 @@ public class WorldManager implements Facet, Enableable, Listener {
         World worldToUnload = loadedWorlds.remove(playerUUID);
         if (worldToUnload != null) {
             // teleport all players to local spawn
-            worldToUnload.getPlayers().forEach(player -> player.teleport(worldConfiguration.getSpawn().toLocation()));
+            worldToUnload.getPlayers()
+                    .forEach(player -> player.teleport(worldConfiguration.getSpawn().toLocation()));
             if (Bukkit.unloadWorld(worldToUnload, true)) {
                 // save in gridfs
             }
