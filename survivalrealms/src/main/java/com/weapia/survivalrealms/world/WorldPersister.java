@@ -1,16 +1,14 @@
 package com.weapia.survivalrealms.world;
 
+import com.google.inject.*;
 import com.mongodb.client.*;
 import com.mongodb.client.gridfs.*;
 import com.mongodb.client.gridfs.model.*;
 import net.sunken.common.database.*;
 import org.bson.*;
-import org.bson.types.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 
-import javax.annotation.*;
-import javax.inject.*;
 import java.io.*;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -54,7 +52,7 @@ public class WorldPersister {
         File worldFolder = world.getWorldFolder();
         File worldZip = worldFolder; // TODO: zip
 
-        InputStream streamToUploadFrom = new FileInputStream(worldFolder);
+        InputStream streamToUploadFrom = new FileInputStream(worldZip);
         GridFSUploadOptions options = new GridFSUploadOptions()
                 .chunkSizeBytes(358400)
                 .metadata(new Document("playerUUID", playerUUID)
@@ -65,4 +63,5 @@ public class WorldPersister {
             worldBucket.delete(oldWorld.getObjectId());
         }
     }
+
 }
