@@ -82,7 +82,7 @@ public class WorldPersister {
             File worldZip = new File(worldZipPath);
             if (worldZip.exists()) {
                 ZipUtility.unzip(worldZipPath, targetFolder.getPath());
-                worldZip.delete();
+                // worldZip.delete();
             }
         }
     }
