@@ -1,6 +1,6 @@
 package com.weapia.survivalrealms.world;
 
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 import net.sunken.common.inject.*;
 import net.sunken.core.util.*;
 import org.bukkit.*;
@@ -46,6 +46,7 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     private void loadWorld(Player player) {
         log.info(String.format("Loading world for %s", player.getName()));
+
         World world = new WorldCreator(player.getUniqueId().toString())
                 .createWorld();
         loadedWorlds.put(player.getUniqueId(), world);
@@ -61,7 +62,6 @@ public class WorldManager implements Facet, Enableable, Listener {
                 unloadWorld(player.getUniqueId());
             }
         }, UNLOAD_AFTER_TICKS_OFFLINE);
-
         scheduledUnloadWorlds.put(player.getUniqueId(), unloadWorldTask);
     }
 
@@ -74,9 +74,12 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     private void unloadWorld(UUID playerUUID) {
         log.info(String.format("Unloading world for %s", playerUUID));
-        World world = loadedWorlds.remove(playerUUID);
-        Bukkit.unloadWorld(world, false);
-        // save the world
+
+        World worldToUnload = loadedWorlds.remove(playerUUID);
+        if (worldToUnload != null) {
+            Bukkit.unloadWorld(worldToUnload, false);
+            // save the world
+        }
     }
 
     private void unloadAllWorlds() {
