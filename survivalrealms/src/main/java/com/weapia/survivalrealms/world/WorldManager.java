@@ -52,6 +52,7 @@ public class WorldManager implements Facet, Enableable, Listener {
                 try {
                     loadWorld(player);
                 } catch (IOException e) {
+                    e.printStackTrace();
                     log.severe(String.format("Unable to load world (%s)", player.getUniqueId()));
                 }
             }
