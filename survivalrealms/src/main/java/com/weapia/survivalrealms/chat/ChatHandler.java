@@ -1,6 +1,7 @@
 package com.weapia.survivalrealms.chat;
 
 import com.google.inject.Inject;
+import com.weapia.survivalrealms.Constants;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandler;
@@ -28,7 +29,12 @@ public class ChatHandler extends PacketHandler<PlayerChatPacket> implements Face
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         event.setCancelled(true);
-        playerManager.get(player.getUniqueId()).ifPresent(abstractPlayer -> packetUtil.send(new PlayerChatPacket(abstractPlayer.toPlayerDetail(), event.getFormat(), event.getMessage())));
+
+        if (event.getMessage().length() <= 256) {
+            playerManager.get(player.getUniqueId()).ifPresent(abstractPlayer -> packetUtil.send(new PlayerChatPacket(abstractPlayer.toPlayerDetail(), event.getFormat(), event.getMessage())));
+        } else {
+            player.sendMessage(Constants.CHAT_OVER_MAX_LENGTH);
+        }
     }
 
     @Override
