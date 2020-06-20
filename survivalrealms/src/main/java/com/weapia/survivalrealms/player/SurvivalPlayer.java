@@ -34,13 +34,12 @@ public class SurvivalPlayer extends CorePlayer {
             player.getInventory().clear();
 
             CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
-            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 6);
+            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 5);
 
-            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 5);
-            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 4);
-            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 3);
+            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 4);
+            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 3);
+            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 2);
 
-            customScoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
             customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
             customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
