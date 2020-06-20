@@ -31,8 +31,8 @@ public class WorldPersister {
 //        return findWorlds(player).first();
 //    }
 
-    private GridFSFindIterable findWorlds(Player player) {
-        return worldBucket.find(eq("playerUUID", player.getUniqueId().toString()));
+    private GridFSFindIterable findWorlds(UUID playerUUID) {
+        return worldBucket.find(eq("playerUUID", playerUUID.toString()));
     }
 
     private GridFSFile getLatestWorld(GridFSFindIterable worlds) {
@@ -43,12 +43,12 @@ public class WorldPersister {
         return world.getMetadata().getInteger("version");
     }
 
-    public void persistWorld(Player player, File worldFolder) throws IOException {
-        GridFSFindIterable worlds = findWorlds(player);
+    public void persistWorld(UUID playerUUID, File worldFolder) throws IOException {
+        GridFSFindIterable worlds = findWorlds(playerUUID);
         int latestVersion = getVersion(getLatestWorld(worlds));
         int newVersion = ++latestVersion;
 
-        String worldFileName = player.getUniqueId().toString();
+        String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName;
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
