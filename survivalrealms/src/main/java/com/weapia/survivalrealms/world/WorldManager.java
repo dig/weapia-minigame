@@ -14,6 +14,8 @@ import org.bukkit.plugin.java.*;
 import org.bukkit.scheduler.*;
 
 import javax.inject.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -23,6 +25,8 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     @Inject
     private JavaPlugin plugin;
+    @Inject
+    private WorldPersister worldPersister;
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
 
@@ -112,7 +116,11 @@ public class WorldManager implements Facet, Enableable, Listener {
     private void scheduleUnloadWorld(Player player) {
         BukkitTask unloadWorldTask = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!player.isOnline()) {
-                unloadWorld(player.getUniqueId());
+                try {
+                    unloadWorld(player.getUniqueId());
+                } catch (IOException e) {
+                    log.severe(String.format("Unable to unload world (%s)", player.getUniqueId()));
+                }
             }
         }, UNLOAD_AFTER_TICKS_OFFLINE);
         scheduledUnloadWorlds.put(player.getUniqueId(), unloadWorldTask);
@@ -125,7 +133,7 @@ public class WorldManager implements Facet, Enableable, Listener {
         }
     }
 
-    private void unloadWorld(UUID playerUUID) {
+    private void unloadWorld(UUID playerUUID) throws IOException {
         log.info(String.format("Unloading world for %s", playerUUID));
 
         World worldToUnload = loadedWorlds.remove(playerUUID);
@@ -134,12 +142,12 @@ public class WorldManager implements Facet, Enableable, Listener {
             worldToUnload.getPlayers()
                     .forEach(player -> player.teleport(worldConfiguration.getSpawn().toLocation()));
             if (Bukkit.unloadWorld(worldToUnload, true)) {
-                // save in gridfs
+                worldPersister.persistWorld(playerUUID, worldToUnload.getWorldFolder());
             }
         }
     }
 
-    private void unloadAllWorlds() {
+    private void unloadAllWorlds() throws IOException {
         for (UUID playerUUID : loadedWorlds.keySet()) {
             unloadWorld(playerUUID);
         }
@@ -151,6 +159,10 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     @Override
     public void disable() {
-        unloadAllWorlds();
+        try {
+            unloadAllWorlds();
+        } catch (IOException e) {
+            log.severe("Unable to unload all worlds.");
+        }
     }
 }
