@@ -40,6 +40,11 @@ public class WorldManager implements Facet, Enableable, Listener {
         if (!worldConfiguration.isAdventure()) {
             if (isUnloadWorldScheduled(player)) {
                 unscheduleUnloadWorld(player);
+
+                World loadedWorld = loadedWorlds.get(player.getUniqueId());
+                if (loadedWorld != null) {
+                    player.teleport(loadedWorld.getSpawnLocation());
+                }
             } else {
                 loadWorld(player);
             }
@@ -75,7 +80,6 @@ public class WorldManager implements Facet, Enableable, Listener {
                 player.teleport(newlyLoadedWorld.getSpawnLocation());
             }
         }
-
     }
 
     private void loadWorld(Player player) {
@@ -88,7 +92,7 @@ public class WorldManager implements Facet, Enableable, Listener {
     }
 
     private boolean isUnloadWorldScheduled(Player player) {
-        return loadedWorlds.containsKey(player.getUniqueId());
+        return scheduledUnloadWorlds.containsKey(player.getUniqueId());
     }
 
     private void scheduleUnloadWorld(Player player) {
