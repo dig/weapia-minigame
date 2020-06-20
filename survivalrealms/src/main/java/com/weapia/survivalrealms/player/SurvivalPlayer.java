@@ -46,7 +46,10 @@ public class SurvivalPlayer extends CorePlayer {
         if (document.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY)) {
             Document doc = (Document) document.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY);
             world = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY);
-            lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY));
+
+            if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
+                lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY));
+            }
         }
         return true;
     }
