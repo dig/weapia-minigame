@@ -71,6 +71,7 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     private void unloadWorld(UUID playerUUID) {
         World world = loadedWorlds.remove(playerUUID);
+        Bukkit.unloadWorld(world, false);
         // save the world
     }
 
