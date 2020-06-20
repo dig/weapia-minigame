@@ -82,6 +82,6 @@ public class GameState extends EventGameState {
 
     @Override
     public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
-        return instigator.getWorld().getName().equals(instigator.getUniqueId().toString()) || worldConfiguration.isAdventure();
+        return worldConfiguration.isAdventure() || instigator.getWorld().getName().equals(instigator.getUniqueId().toString());
     }
 }
