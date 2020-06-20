@@ -60,6 +60,22 @@ public class WorldManager implements Facet, Enableable, Listener {
         }
     }
 
+    @EventHandler
+    public void onWorldInit(WorldInitEvent event) {
+        World world = event.getWorld();
+
+        UUID playerUUID;
+        try {
+            playerUUID = UUID.fromString(world.getName());
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        if (loadingWorlds.contains(playerUUID)) {
+            world.setAutoSave(true);
+            world.setKeepSpawnInMemory(false);
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         World newlyLoadedWorld = event.getWorld();
