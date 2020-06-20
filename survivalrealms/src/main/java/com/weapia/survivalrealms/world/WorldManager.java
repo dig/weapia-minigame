@@ -71,7 +71,6 @@ public class WorldManager implements Facet, Enableable, Listener {
         } catch (IllegalArgumentException e) {
             return;
         }
-
         if (loadingWorlds.contains(playerUUID)) {
             loadingWorlds.remove(playerUUID);
 
@@ -116,8 +115,8 @@ public class WorldManager implements Facet, Enableable, Listener {
 
         World worldToUnload = loadedWorlds.remove(playerUUID);
         if (worldToUnload != null) {
-            Bukkit.unloadWorld(worldToUnload, false);
-            // save the world
+            Bukkit.unloadWorld(worldToUnload, true);
+            // save the world in GridFS
         }
     }
 
