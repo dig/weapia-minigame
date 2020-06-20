@@ -63,7 +63,7 @@ public class WorldPersister {
             worldBucket.delete(oldWorld.getObjectId());
         }
 
-        worldFolder.delete();
+        FileUtil.deleteDirectory(worldFolder);
         worldZip.delete();
     }
 
