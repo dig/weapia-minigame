@@ -62,6 +62,9 @@ public class WorldPersister {
         for (GridFSFile oldWorld : worlds) {
             worldBucket.delete(oldWorld.getObjectId());
         }
+
+        worldFolder.delete();
+        worldZip.delete();
     }
 
 }
