@@ -31,7 +31,7 @@ public class WorldManager implements Facet, Enableable, Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (checkScheduledUnloadWorld(player)) {
+        if (isUnloadWorldScheduled(player)) {
             unscheduleUnloadWorld(player);
         } else {
             loadWorld(player);
@@ -47,16 +47,13 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
-        World loadedWorld = event.getWorld();
+        World newlyLoadedWorld = event.getWorld();
+        UUID playerWhoLoadedUUID = UUID.fromString(newlyLoadedWorld.getName());
 
-        for (Map.Entry<UUID, World> loadedWorldEntry : loadedWorlds.entrySet()) {
-            if (loadedWorldEntry.getValue().equals(loadedWorld)) {
-                Player player = Bukkit.getPlayer(loadedWorldEntry.getKey());
-                if (player != null) {
-                    player.teleport(loadedWorld.getSpawnLocation());
-                }
-
-                break;
+        if (loadedWorlds.containsKey(playerWhoLoadedUUID)) {
+            Player player = Bukkit.getPlayer(playerWhoLoadedUUID);
+            if (player != null) {
+                player.teleport(newlyLoadedWorld.getSpawnLocation());
             }
         }
     }
@@ -69,7 +66,7 @@ public class WorldManager implements Facet, Enableable, Listener {
         loadedWorlds.put(player.getUniqueId(), world);
     }
 
-    private boolean checkScheduledUnloadWorld(Player player) {
+    private boolean isUnloadWorldScheduled(Player player) {
         return loadedWorlds.containsKey(player.getUniqueId());
     }
 
