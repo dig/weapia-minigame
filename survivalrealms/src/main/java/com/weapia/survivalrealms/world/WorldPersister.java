@@ -67,4 +67,23 @@ public class WorldPersister {
         worldZip.delete();
     }
 
+    public void downloadWorld(UUID playerUUID, File targetFolder) throws IOException {
+        GridFSFindIterable worlds = findWorlds(playerUUID);
+        GridFSFile latestWorld = getLatestWorld(worlds);
+
+        if (latestWorld != null) {
+            String worldFileName = playerUUID.toString();
+            String worldZipPath = targetFolder.getPath() + File.separator + worldFileName + ".zip";
+
+            FileOutputStream streamToDownloadTo = new FileOutputStream(new File(worldZipPath));
+            worldBucket.downloadToStream(latestWorld.getObjectId(), streamToDownloadTo);
+            streamToDownloadTo.close();
+
+            File worldZip = new File(worldZipPath);
+            if (worldZip.exists()) {
+                ZipUtility.unzip(worldZipPath, targetFolder.getPath());
+                worldZip.delete();
+            }
+        }
+    }
 }
