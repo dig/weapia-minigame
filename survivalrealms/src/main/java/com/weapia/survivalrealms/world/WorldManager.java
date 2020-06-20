@@ -71,7 +71,6 @@ public class WorldManager implements Facet, Enableable, Listener {
         } catch (IllegalArgumentException e) {
             return;
         }
-
         if (loadingWorlds.contains(playerUUID)) {
             loadingWorlds.remove(playerUUID);
 
