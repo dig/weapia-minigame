@@ -46,10 +46,10 @@ public class WorldPersister {
     public void persistWorld(Player player, File worldFolder) throws IOException {
         GridFSFindIterable worlds = findWorlds(player);
         int latestVersion = getVersion(getLatestWorld(worlds));
-        int newVersion = ++latestVersion;
+        int newVersion = latestVersion + 1;
 
         String worldFileName = player.getUniqueId().toString();
-        String worldZipPath = worldFolder.getParent() + File.separator + worldFileName;
+        String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
 
