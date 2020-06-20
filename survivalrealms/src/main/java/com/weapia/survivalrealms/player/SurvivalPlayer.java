@@ -23,6 +23,7 @@ public class SurvivalPlayer extends CorePlayer {
             Document doc = (Document) document.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY);
             world = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY);
         }
+        return true;
     }
 
     @Override
