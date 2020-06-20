@@ -27,5 +27,4 @@ public class SurvivalRealmsPluginModule extends PluginModule {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(SpawnCommand.class);
     }
-
 }
