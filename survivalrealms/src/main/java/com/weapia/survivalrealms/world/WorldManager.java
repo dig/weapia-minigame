@@ -57,7 +57,10 @@ public class WorldManager implements Facet, Enableable, Listener {
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         World newlyLoadedWorld = event.getWorld();
-        UUID playerUUID = null;
+
+        log.info(String.format("World load with name %s", newlyLoadedWorld.getName()));
+
+        UUID playerUUID;
         try {
             playerUUID = UUID.fromString(newlyLoadedWorld.getName());
         } catch (IllegalArgumentException ignored) {
