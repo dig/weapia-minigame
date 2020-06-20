@@ -5,11 +5,12 @@ import com.mongodb.client.*;
 import com.mongodb.client.gridfs.*;
 import com.mongodb.client.gridfs.model.*;
 import net.sunken.common.database.*;
+import net.sunken.common.util.*;
 import org.bson.*;
-import org.bukkit.*;
 import org.bukkit.entity.*;
 
 import java.io.*;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -42,22 +43,22 @@ public class WorldPersister {
         return world.getMetadata().getInteger("version");
     }
 
-    public void persistWorld(Player player, World world) throws FileNotFoundException {
-        String playerUUID = player.getUniqueId().toString();
-
+    public void persistWorld(Player player, File worldFolder) throws IOException {
         GridFSFindIterable worlds = findWorlds(player);
         int latestVersion = getVersion(getLatestWorld(worlds));
         int newVersion = ++latestVersion;
 
-        File worldFolder = world.getWorldFolder();
-        File worldZip = worldFolder; // TODO: zip
+        String worldFileName = player.getUniqueId().toString();
+        String worldZipPath = worldFolder.getParent() + File.separator + worldFileName;
+        ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
+        File worldZip = new File(worldZipPath);
 
         InputStream streamToUploadFrom = new FileInputStream(worldZip);
         GridFSUploadOptions options = new GridFSUploadOptions()
                 .chunkSizeBytes(358400)
-                .metadata(new Document("playerUUID", playerUUID)
+                .metadata(new Document("playerUUID", worldFileName)
                         .append("version", newVersion));
-        worldBucket.uploadFromStream(playerUUID, streamToUploadFrom, options);
+        worldBucket.uploadFromStream(worldFileName, streamToUploadFrom, options);
 
         for (GridFSFile oldWorld : worlds) {
             worldBucket.delete(oldWorld.getObjectId());
