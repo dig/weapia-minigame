@@ -11,8 +11,7 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
         super(DummyGeneratorAccess.INSTANCE, null, null);
         this.parent = parent;
     }
-
-
+    
     @Override
     public void buildBase(RegionLimitedWorldAccess regionLimitedWorldAccess, IChunkAccess iChunkAccess) {
         parent.buildBase(regionLimitedWorldAccess, iChunkAccess);
