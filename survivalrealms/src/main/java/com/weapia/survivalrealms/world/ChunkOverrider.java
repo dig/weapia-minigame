@@ -1,8 +1,6 @@
 package com.weapia.survivalrealms.world;
 
 import net.minecraft.server.v1_15_R1.*;
-import org.bukkit.craftbukkit.v1_15_R1.util.DummyGeneratorAccess;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -22,9 +20,11 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
     }
 
     private final ChunkGenerator<C> parent;
-    public ChunkOverrider(GeneratorAccess generatorAccess, ChunkGenerator<C> parent) {
+    private final org.bukkit.World world;
+    public ChunkOverrider(GeneratorAccess generatorAccess, ChunkGenerator<C> parent, org.bukkit.World world) {
         super(generatorAccess, null, null);
         this.parent = parent;
+        this.world = world;
     }
 
     @Override
@@ -60,6 +60,27 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
     @Override
     public void buildBase(RegionLimitedWorldAccess regionLimitedWorldAccess, IChunkAccess iChunkAccess) {
         parent.buildBase(regionLimitedWorldAccess, iChunkAccess);
+
+        int chunkX = iChunkAccess.getPos().x;
+        int chunkZ = iChunkAccess.getPos().z;
+
+        org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(world);
+
+        if (chunkX > 1 || chunkZ > 1) {
+            chunkData.setRegion(0, 0, 0, 16, 256, 16, org.bukkit.Material.AIR);
+        }
+
+        CustomChunkData craftData = (CustomChunkData) chunkData;
+        ChunkSection[] sections = craftData.getRawChunkData();
+        ChunkSection[] csect = iChunkAccess.getSections();
+        int scnt = Math.min(csect.length, sections.length);
+
+        for(int sec = 0; sec < scnt; ++sec) {
+            if (sections[sec] != null) {
+                ChunkSection section = sections[sec];
+                csect[sec] = section;
+            }
+        }
     }
 
     @Override
