@@ -3,13 +3,14 @@ package com.weapia.survivalrealms.world;
 import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.config.*;
 import lombok.extern.java.*;
-import net.minecraft.server.v1_15_R1.ChunkGenerator;
-import net.minecraft.server.v1_15_R1.PlayerChunkMap;
+import net.minecraft.server.v1_15_R1.*;
 import net.sunken.common.config.*;
 import net.sunken.common.inject.*;
 import net.sunken.core.util.*;
 import org.bukkit.*;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.util.DummyGeneratorAccess;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
@@ -108,15 +109,17 @@ public class WorldManager implements Facet, Enableable, Listener {
             // add custom generator
             CraftWorld world = (CraftWorld) event.getWorld();
             PlayerChunkMap playerChunkMap = world.getHandle().getChunkProvider().playerChunkMap;
-            Field chunkGeneratorField;
+
             try {
-                chunkGeneratorField = PlayerChunkMap.class.getDeclaredField("chunkGenerator");
+                Field chunkGeneratorField = PlayerChunkMap.class.getDeclaredField("chunkGenerator");
                 chunkGeneratorField.setAccessible(true);
                 Object chunkGeneratorObject = chunkGeneratorField.get(playerChunkMap);
 
                 ChunkGenerator<?> chunkGenerator = (ChunkGenerator<?>) chunkGeneratorObject;
-                ChunkOverrider<?> overrider = new ChunkOverrider<>(chunkGenerator);
-                chunkGeneratorField.set(playerChunkMap, overrider);
+                // ChunkOverrider<?> overrider = new ChunkOverrider<>(chunkGenerator);
+
+                ChunkProviderGenerate chunkProviderGenerate = new ChunkProviderGenerate(DummyGeneratorAccess.INSTANCE, world.getHandle().worldProvider.getChunkGenerator().getWorldChunkManager(), new GeneratorSettingsOverworld());
+                chunkGeneratorField.set(playerChunkMap, chunkProviderGenerate);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -134,7 +137,6 @@ public class WorldManager implements Facet, Enableable, Listener {
         worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
         loadingWorlds.add(player.getUniqueId());
         World world = new WorldCreator(player.getUniqueId().toString())
-                .environment(World.Environment.NORMAL)
                 .createWorld();
         loadedWorlds.put(player.getUniqueId(), world);
     }
