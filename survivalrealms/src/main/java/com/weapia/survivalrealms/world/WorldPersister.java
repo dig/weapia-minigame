@@ -66,8 +66,8 @@ public class WorldPersister {
             worldBucket.delete(oldWorld.getObjectId());
         }
 
-        FileUtil.deleteDirectory(worldFolder);
-        worldZip.delete();
+        // FileUtil.deleteDirectory(worldFolder);
+        // worldZip.delete();
     }
 
     public void downloadWorld(UUID playerUUID, File targetFolder) throws IOException {
