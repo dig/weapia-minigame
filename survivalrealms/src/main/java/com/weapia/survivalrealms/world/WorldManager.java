@@ -146,7 +146,6 @@ public class WorldManager implements Facet, Enableable, Listener {
 
         World worldToUnload = loadedWorlds.remove(playerUUID);
         if (worldToUnload != null) {
-            // teleport all players to local spawn
             worldToUnload.getPlayers()
                     .forEach(player -> {
                         player.sendMessage(Constants.WORLD_UNLOAD);
