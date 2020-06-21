@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.world;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 
@@ -9,6 +10,6 @@ public class RealmGenerator extends ChunkGenerator {
 
     @Override
     public ChunkData generateChunkData(World world, Random random, int chunkX, int chunkZ, BiomeGrid biome) {
-        return createChunkData(world);
+        return Bukkit.createChunkData(world);
     }
 }
