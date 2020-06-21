@@ -27,17 +27,13 @@ public class WorldPersister {
         this.worldBucket = GridFSBuckets.create(mainDatabase, DatabaseHelper.GRIDFS_BUCKET_SURVIVAL_REALMS);
     }
 
-//    @Nullable
-//    public GridFSFile getWorld(Player player) {
-//        return findWorlds(player).first();
-//    }
-
+    // be warned, this is live
     private GridFSFindIterable findWorlds(UUID playerUUID) {
         return worldBucket.find(eq("metadata.playerUUID", playerUUID.toString()));
     }
 
     private GridFSFile getLatestWorld(GridFSFindIterable worlds) {
-        return worlds.sort(new Document("version", 1)).first();
+        return worlds.sort(new Document("metadata.version", 1)).first();
     }
 
     private int getVersion(GridFSFile world) {
@@ -48,6 +44,9 @@ public class WorldPersister {
         GridFSFindIterable worlds = findWorlds(playerUUID);
         GridFSFile latestWorld = getLatestWorld(worlds);
         int newVersion = latestWorld == null ? 0 : getVersion(latestWorld) + 1;
+
+        List<GridFSFile> oldWorlds = new ArrayList<>();
+        worlds.into(oldWorlds);
 
         String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
@@ -62,7 +61,7 @@ public class WorldPersister {
                         .append("version", newVersion));
         worldBucket.uploadFromStream(worldFileName, streamToUploadFrom, options);
 
-        for (GridFSFile oldWorld : worlds) {
+        for (GridFSFile oldWorld : oldWorlds) {
             worldBucket.delete(oldWorld.getObjectId());
         }
 
