@@ -3,10 +3,25 @@ package com.weapia.survivalrealms.world;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.craftbukkit.v1_15_R1.util.DummyGeneratorAccess;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
 
 public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGenerator<C> {
 
-    final ChunkGenerator<C> parent;
+    private final ChunkGenerator<C> parent;
+    private static Method getBiome;
+
+    static {
+        try {
+            getBiome = ChunkGenerator.class.getDeclaredMethod("getBiome", BiomeManager.class, BlockPosition.class);
+            getBiome.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public ChunkOverrider(ChunkGenerator<C> parent) {
         super(DummyGeneratorAccess.INSTANCE, null, null);
@@ -14,13 +29,23 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
     }
 
     @Override
-    public void doCarving(BiomeManager biomemanager, IChunkAccess ichunkaccess, WorldGenStage.Features worldgenstage_features) {
-        parent.doCarving(biomemanager, ichunkaccess, worldgenstage_features);
+    public void createBiomes(IChunkAccess ichunkaccess) {
+        parent.createBiomes(ichunkaccess);
     }
 
     @Override
-    public void createBiomes(IChunkAccess ichunkaccess) {
-        parent.createBiomes(ichunkaccess);
+    protected BiomeBase getBiome(BiomeManager biomemanager, BlockPosition blockposition) {
+        try {
+            return (BiomeBase) getBiome.invoke(parent, biomemanager, blockposition);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void doCarving(BiomeManager biomemanager, IChunkAccess ichunkaccess, WorldGenStage.Features worldgenstage_features) {
+        parent.doCarving(biomemanager, ichunkaccess, worldgenstage_features);
     }
 
     @Override
@@ -30,7 +55,6 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
 
     @Override
     public void addDecorations(RegionLimitedWorldAccess regionLimitedWorldAccess) {
-
         parent.addDecorations(regionLimitedWorldAccess);
     }
 
@@ -82,6 +106,16 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
     @Override
     public int getGenerationDepth() {
         return parent.getGenerationDepth();
+    }
+
+    @Override
+    public List<BiomeBase.BiomeMeta> getMobsFor(EnumCreatureType enumcreaturetype, BlockPosition blockposition) {
+        return parent.getMobsFor(enumcreaturetype, blockposition);
+    }
+
+    @Override
+    public void createStructures(BiomeManager biomemanager, IChunkAccess ichunkaccess, ChunkGenerator<?> chunkgenerator, DefinedStructureManager definedstructuremanager) {
+        parent.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
     }
 
     @Override
