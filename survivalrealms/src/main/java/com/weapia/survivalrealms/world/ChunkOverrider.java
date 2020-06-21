@@ -67,7 +67,7 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
         int chunkX = iChunkAccess.getPos().x;
         int chunkZ = iChunkAccess.getPos().z;
 
-        if ((chunkX < 1 || chunkX > 1) || (chunkZ < 1 || chunkZ > 1)) {
+        if ((chunkX <= 1 || chunkX >= 1) || (chunkZ <= 1 || chunkZ >= 1)) {
             org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(bukkitWorld);
             chunkData.setRegion(0, 0, 0, 16, 256, 16, org.bukkit.Material.AIR);
 
