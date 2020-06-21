@@ -86,6 +86,7 @@ public class WorldManager implements Facet, Enableable, Listener {
         }
 
         if (loadingWorlds.contains(playerUUID)) {
+            setGenerator(loadingWorld);
             loadingWorld.setAutoSave(true);
             loadingWorld.setKeepSpawnInMemory(false);
         }
@@ -105,25 +106,6 @@ public class WorldManager implements Facet, Enableable, Listener {
 
         if (loadingWorlds.contains(playerUUID)) {
             loadingWorlds.remove(playerUUID);
-
-            // add custom generator
-            CraftWorld world = (CraftWorld) event.getWorld();
-            PlayerChunkMap playerChunkMap = world.getHandle().getChunkProvider().playerChunkMap;
-
-            try {
-                Field chunkGeneratorField = PlayerChunkMap.class.getDeclaredField("chunkGenerator");
-                chunkGeneratorField.setAccessible(true);
-                ChunkGenerator<?> chunkGenerator = (ChunkGenerator<?>) chunkGeneratorField.get(playerChunkMap);
-
-                Field generatorAccessField = ChunkGenerator.class.getDeclaredField("a");
-                generatorAccessField.setAccessible(true);
-                GeneratorAccess generatorAccess = (GeneratorAccess) generatorAccessField.get(chunkGenerator);
-
-                ChunkOverrider<?> overrider = new ChunkOverrider<>(generatorAccess, chunkGenerator, newlyLoadedWorld);
-                chunkGeneratorField.set(playerChunkMap, overrider);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
 
             Player player = Bukkit.getPlayer(playerUUID);
             if (player != null) {
@@ -187,6 +169,26 @@ public class WorldManager implements Facet, Enableable, Listener {
     private void unloadAllWorlds() throws IOException {
         for (UUID playerUUID : loadedWorlds.keySet()) {
             unloadWorld(playerUUID);
+        }
+    }
+
+    private void setGenerator(World world) {
+        CraftWorld craftWorld = (CraftWorld) world;
+        PlayerChunkMap playerChunkMap = craftWorld.getHandle().getChunkProvider().playerChunkMap;
+
+        try {
+            Field chunkGeneratorField = PlayerChunkMap.class.getDeclaredField("chunkGenerator");
+            chunkGeneratorField.setAccessible(true);
+            ChunkGenerator<?> chunkGenerator = (ChunkGenerator<?>) chunkGeneratorField.get(playerChunkMap);
+
+            Field generatorAccessField = ChunkGenerator.class.getDeclaredField("a");
+            generatorAccessField.setAccessible(true);
+            GeneratorAccess generatorAccess = (GeneratorAccess) generatorAccessField.get(chunkGenerator);
+
+            ChunkOverrider<?> overrider = new ChunkOverrider<>(generatorAccess, chunkGenerator, world);
+            chunkGeneratorField.set(playerChunkMap, overrider);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 
