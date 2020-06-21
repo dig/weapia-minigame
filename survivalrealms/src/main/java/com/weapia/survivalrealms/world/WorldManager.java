@@ -114,6 +114,7 @@ public class WorldManager implements Facet, Enableable, Listener {
         worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
         loadingWorlds.add(player.getUniqueId());
         World world = new WorldCreator(player.getUniqueId().toString())
+                .environment(World.Environment.NORMAL)
                 .generator(new RealmGenerator())
                 .createWorld();
         loadedWorlds.put(player.getUniqueId(), world);
