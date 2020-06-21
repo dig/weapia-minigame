@@ -4,6 +4,7 @@ import com.weapia.survivalrealms.chat.ChatHandler;
 import com.weapia.survivalrealms.command.AdventureCommand;
 import com.weapia.survivalrealms.command.SpawnCommand;
 import com.weapia.survivalrealms.config.WorldConfiguration;
+import com.weapia.survivalrealms.economy.EconomyLoader;
 import com.weapia.survivalrealms.world.*;
 import net.sunken.common.config.ConfigModule;
 import net.sunken.common.inject.PluginFacetBinder;
@@ -32,5 +33,6 @@ public class SurvivalRealmsPluginModule extends PluginModule {
         pluginFacetBinder.addBinding(ChatHandler.class);
         pluginFacetBinder.addBinding(SpawnCommand.class);
         pluginFacetBinder.addBinding(AdventureCommand.class);
+        pluginFacetBinder.addBinding(EconomyLoader.class);
     }
 }

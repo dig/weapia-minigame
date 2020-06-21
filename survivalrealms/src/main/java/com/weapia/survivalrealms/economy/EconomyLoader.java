@@ -1,0 +1,26 @@
+package com.weapia.survivalrealms.economy;
+
+import net.milkbowl.vault.economy.Economy;
+import net.sunken.common.inject.Enableable;
+import net.sunken.common.inject.Facet;
+import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import javax.inject.Inject;
+
+public class EconomyLoader implements Facet, Enableable {
+
+    @Inject
+    private JavaPlugin plugin;
+    @Inject
+    private SimpleEconomy economy;
+
+    @Override
+    public void enable() {
+        plugin.getServer().getServicesManager().register(Economy.class, economy, plugin, ServicePriority.High);
+    }
+
+    @Override
+    public void disable() {
+    }
+}

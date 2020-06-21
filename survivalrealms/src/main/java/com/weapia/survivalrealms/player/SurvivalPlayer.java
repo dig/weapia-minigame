@@ -2,6 +2,7 @@ package com.weapia.survivalrealms.player;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import net.sunken.common.database.DatabaseHelper;
 import net.sunken.common.player.Rank;
 import net.sunken.core.PluginInform;
@@ -18,13 +19,17 @@ import java.util.UUID;
 public class SurvivalPlayer extends CorePlayer {
 
     @Getter
-    private Location lastLocation;
     private String world;
+    @Getter
+    private Location lastLocation;
+    @Getter @Setter
+    private int coins;
 
     public SurvivalPlayer(UUID uuid, String username, ScoreboardRegistry scoreboardRegistry, PluginInform pluginInform) {
         super(uuid, username, scoreboardRegistry, pluginInform);
         this.world = null;
         this.lastLocation = null;
+        this.coins = 0;
     }
 
     @Override
@@ -46,10 +51,10 @@ public class SurvivalPlayer extends CorePlayer {
         if (document.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY)) {
             Document doc = (Document) document.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY);
             world = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY);
-
             if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
                 lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY));
             }
+            coins = doc.getInteger(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, 0);
         }
         return true;
     }
@@ -57,7 +62,8 @@ public class SurvivalPlayer extends CorePlayer {
     @Override
     public Document toDocument() {
         Document document = new Document()
-                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, world);
+                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, world)
+                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, coins);
         toPlayer().ifPresent(player -> document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(player.getLocation())));
 
         return super.toDocument()
