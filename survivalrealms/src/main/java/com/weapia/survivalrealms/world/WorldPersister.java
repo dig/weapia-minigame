@@ -49,6 +49,11 @@ public class WorldPersister {
 
         String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
+
+        // dunno, session files dont work when unzipping
+        File worldSessionLock = new File(worldFolder.getParent() + File.separator + "session.lock");
+        worldSessionLock.delete();
+        
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
 
@@ -81,8 +86,7 @@ public class WorldPersister {
 
             File worldZip = new File(worldZipPath);
             if (worldZip.exists()) {
-                new File(targetFolder.getPath() + File.separator + "/test").mkdir();
-                ZipUtility.unzip(worldZipPath, targetFolder.getPath() + File.separator + "/test");
+                ZipUtility.unzip(worldZipPath, targetFolder.getPath());
                 worldZip.delete();
             }
         }
