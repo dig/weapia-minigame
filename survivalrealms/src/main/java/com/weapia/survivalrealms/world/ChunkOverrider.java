@@ -63,9 +63,8 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
     @Override
     public void buildBase(RegionLimitedWorldAccess regionLimitedWorldAccess, IChunkAccess iChunkAccess) {
         parent.buildBase(regionLimitedWorldAccess, iChunkAccess);
-
-        int chunkX = iChunkAccess.getPos().x;
-        int chunkZ = iChunkAccess.getPos().z;
+        int chunkX = iChunkAccess.getPos().x << 4;
+        int chunkZ = iChunkAccess.getPos().z << 4;
 
         if ((chunkX <= -1 || chunkX >= 1) || (chunkZ <= -1 || chunkZ >= 1)) {
             org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(bukkitWorld);
@@ -137,8 +136,8 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
 
     @Override
     public void createStructures(BiomeManager biomemanager, IChunkAccess ichunkaccess, ChunkGenerator<?> chunkgenerator, DefinedStructureManager definedstructuremanager) {
-        int chunkX = ichunkaccess.getPos().x;
-        int chunkZ = ichunkaccess.getPos().z;
+        int chunkX = ichunkaccess.getPos().x << 4;
+        int chunkZ = ichunkaccess.getPos().z << 4;
 
         if (chunkX == 0 && chunkZ == 0) {
             parent.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
