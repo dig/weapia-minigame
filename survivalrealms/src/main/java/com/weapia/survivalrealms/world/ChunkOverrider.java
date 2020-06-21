@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGenerator<C> {
-    
+
     private static Method getBiome;
 
     static {
