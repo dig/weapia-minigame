@@ -9,8 +9,7 @@ import java.util.List;
 
 
 public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGenerator<C> {
-
-    private static CustomGeneratorAccess customGeneratorAccess = new CustomGeneratorAccess();
+    
     private static Method getBiome;
 
     static {
@@ -23,8 +22,8 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
     }
 
     private final ChunkGenerator<C> parent;
-    public ChunkOverrider(ChunkGenerator<C> parent) {
-        super(customGeneratorAccess, null, null);
+    public ChunkOverrider(GeneratorAccess generatorAccess, ChunkGenerator<C> parent) {
+        super(generatorAccess, null, null);
         this.parent = parent;
     }
 

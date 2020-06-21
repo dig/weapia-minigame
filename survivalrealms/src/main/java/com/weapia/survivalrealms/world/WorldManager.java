@@ -113,12 +113,13 @@ public class WorldManager implements Facet, Enableable, Listener {
             try {
                 Field chunkGeneratorField = PlayerChunkMap.class.getDeclaredField("chunkGenerator");
                 chunkGeneratorField.setAccessible(true);
-                Object chunkGeneratorObject = chunkGeneratorField.get(playerChunkMap);
+                ChunkGenerator<?> chunkGenerator = (ChunkGenerator<?>) chunkGeneratorField.get(playerChunkMap);
 
-                ChunkGenerator<?> chunkGenerator = (ChunkGenerator<?>) chunkGeneratorObject;
+                Field generatorAccessField = ChunkGenerator.class.getDeclaredField("a");
+                generatorAccessField.setAccessible(true);
+                GeneratorAccess generatorAccess = (GeneratorAccess) generatorAccessField.get(chunkGenerator);
+
                 ChunkOverrider<?> overrider = new ChunkOverrider<>(chunkGenerator);
-
-                // ChunkProviderGenerate chunkProviderGenerate = new ChunkProviderGenerate(DummyGeneratorAccess.INSTANCE, world.getHandle().worldProvider.getChunkGenerator().getWorldChunkManager(), new GeneratorSettingsOverworld());
                 chunkGeneratorField.set(playerChunkMap, overrider);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
