@@ -10,6 +10,7 @@ import net.sunken.common.util.*;
 import org.bson.*;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -55,19 +56,21 @@ public class WorldPersister {
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
 
-        InputStream streamToUploadFrom = new FileInputStream(worldZip);
         GridFSUploadOptions options = new GridFSUploadOptions()
                 .chunkSizeBytes(358400)
                 .metadata(new Document("playerUUID", worldFileName)
                         .append("version", newVersion));
-        worldBucket.uploadFromStream(worldFileName, streamToUploadFrom, options);
+        GridFSUploadStream uploadStream = worldBucket.openUploadStream(worldFileName, options);
+        byte[] data = Files.readAllBytes(worldZip.toPath());
+        uploadStream.write(data);
+        uploadStream.close();
 
         for (GridFSFile oldWorld : worlds) {
             worldBucket.delete(oldWorld.getObjectId());
         }
 
-        // FileUtil.deleteDirectory(worldFolder);
-        // worldZip.delete();
+        FileUtil.deleteDirectory(worldFolder);
+        worldZip.delete();
     }
 
     public void downloadWorld(UUID playerUUID, File targetFolder) throws IOException {
