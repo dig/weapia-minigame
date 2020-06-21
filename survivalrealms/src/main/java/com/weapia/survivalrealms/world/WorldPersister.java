@@ -52,10 +52,9 @@ public class WorldPersister {
         worlds.into(oldWorlds);
 
         String worldFileName = playerUUID.toString();
-        String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
-        ZipUtil.pack(worldFolder, new File(worldZipPath));
+        File worldZip = new File(worldFolder.getParent() + File.separator + worldFileName + ".zip");
+        ZipUtil.pack(worldFolder, worldZip);
 
-        File worldZip = new File(worldZipPath);
         InputStream streamToUploadFrom = new FileInputStream(worldZip);
         GridFSUploadOptions options = new GridFSUploadOptions()
                 .chunkSizeBytes(358400)
