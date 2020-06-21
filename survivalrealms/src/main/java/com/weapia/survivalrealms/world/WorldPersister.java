@@ -51,9 +51,9 @@ public class WorldPersister {
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
 
         // dunno, session files dont work when unzipping
-        File worldSessionLock = new File(worldFolder.getParent() + File.separator + "session.lock");
+        File worldSessionLock = new File(worldFolder.getPath() + File.separator + "session.lock");
         worldSessionLock.delete();
-        
+
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
 
