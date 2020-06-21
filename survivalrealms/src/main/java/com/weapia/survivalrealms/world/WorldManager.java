@@ -79,7 +79,7 @@ public class WorldManager implements Facet, Enableable, Listener {
         } catch (IllegalArgumentException e) {
             return;
         }
-        
+
         if (loadingWorlds.contains(playerUUID)) {
             loadingWorld.setAutoSave(true);
             loadingWorld.setKeepSpawnInMemory(false);

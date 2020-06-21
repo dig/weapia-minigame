@@ -9,6 +9,7 @@ import lombok.extern.java.Log;
 import net.sunken.common.database.*;
 import net.sunken.common.util.*;
 import org.bson.*;
+import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -52,9 +53,9 @@ public class WorldPersister {
 
         String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
-        ZipUtility.zip(Arrays.asList(worldFolder.listFiles()), worldZipPath);
-        File worldZip = new File(worldZipPath);
+        ZipUtil.pack(worldFolder, new File(worldZipPath));
 
+        File worldZip = new File(worldZipPath);
         InputStream streamToUploadFrom = new FileInputStream(worldZip);
         GridFSUploadOptions options = new GridFSUploadOptions()
                 .chunkSizeBytes(358400)
@@ -76,16 +77,15 @@ public class WorldPersister {
 
         if (latestWorld != null) {
             String worldFileName = playerUUID.toString();
-            String worldZipPath = targetFolder.getPath() + File.separator + worldFileName + ".zip";
-            String worldFolder = targetFolder.getPath() + File.separator + worldFileName;
+            File worldZip = new File(targetFolder.getPath() + File.separator + worldFileName + ".zip");
+            File worldFolder = new File(targetFolder.getPath() + File.separator + worldFileName);
 
-            FileOutputStream streamToDownloadTo = new FileOutputStream(new File(worldZipPath));
+            FileOutputStream streamToDownloadTo = new FileOutputStream(worldZip);
             worldBucket.downloadToStream(latestWorld.getObjectId(), streamToDownloadTo);
             streamToDownloadTo.close();
 
-            File worldZip = new File(worldZipPath);
             if (worldZip.exists()) {
-                ZipUtility.unzip(worldZipPath, worldFolder);
+                ZipUtil.unpack(worldZip, worldFolder);
                 worldZip.delete();
             }
         }
