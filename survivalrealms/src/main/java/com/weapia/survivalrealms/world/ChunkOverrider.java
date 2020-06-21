@@ -67,37 +67,36 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
         int chunkX = iChunkAccess.getPos().x;
         int chunkZ = iChunkAccess.getPos().z;
 
-        org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(bukkitWorld);
-
         if (chunkX > 1 || chunkZ > 1) {
+            org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(bukkitWorld);
             chunkData.setRegion(0, 0, 0, 16, 256, 16, org.bukkit.Material.AIR);
-        }
 
-        CustomChunkData craftData = (CustomChunkData) chunkData;
-        ChunkSection[] sections = craftData.getRawChunkData();
-        ChunkSection[] csect = iChunkAccess.getSections();
-        int scnt = Math.min(csect.length, sections.length);
+            CustomChunkData craftData = (CustomChunkData) chunkData;
+            ChunkSection[] sections = craftData.getRawChunkData();
+            ChunkSection[] csect = iChunkAccess.getSections();
+            int scnt = Math.min(csect.length, sections.length);
 
-        for(int sec = 0; sec < scnt; ++sec) {
-            if (sections[sec] != null) {
-                ChunkSection section = sections[sec];
-                csect[sec] = section;
+            for(int sec = 0; sec < scnt; ++sec) {
+                if (sections[sec] != null) {
+                    ChunkSection section = sections[sec];
+                    csect[sec] = section;
+                }
             }
-        }
 
-        if (craftData.getTiles() != null) {
-            Iterator var20 = craftData.getTiles().iterator();
-            CraftWorld craftWorld = (CraftWorld) bukkitWorld;
+            if (craftData.getTiles() != null) {
+                Iterator var20 = craftData.getTiles().iterator();
+                CraftWorld craftWorld = (CraftWorld) bukkitWorld;
 
-            while(var20.hasNext()) {
-                BlockPosition pos = (BlockPosition)var20.next();
-                int tx = pos.getX();
-                int ty = pos.getY();
-                int tz = pos.getZ();
-                Block block = craftData.getTypeId(tx, ty, tz).getBlock();
-                if (block.isTileEntity()) {
-                    TileEntity tile = ((ITileEntity)block).createTile(craftWorld.getHandle());
-                    iChunkAccess.setTileEntity(new BlockPosition((chunkX << 4) + tx, ty, (chunkZ << 4) + tz), tile);
+                while(var20.hasNext()) {
+                    BlockPosition pos = (BlockPosition)var20.next();
+                    int tx = pos.getX();
+                    int ty = pos.getY();
+                    int tz = pos.getZ();
+                    Block block = craftData.getTypeId(tx, ty, tz).getBlock();
+                    if (block.isTileEntity()) {
+                        TileEntity tile = ((ITileEntity)block).createTile(craftWorld.getHandle());
+                        iChunkAccess.setTileEntity(new BlockPosition((chunkX << 4) + tx, ty, (chunkZ << 4) + tz), tile);
+                    }
                 }
             }
         }
