@@ -1,8 +1,11 @@
 package com.weapia.survivalrealms.world;
 
 import net.minecraft.server.v1_15_R1.*;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -20,11 +23,11 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
     }
 
     private final ChunkGenerator<C> parent;
-    private final org.bukkit.World world;
-    public ChunkOverrider(GeneratorAccess generatorAccess, ChunkGenerator<C> parent, org.bukkit.World world) {
+    private final org.bukkit.World bukkitWorld;
+    public ChunkOverrider(GeneratorAccess generatorAccess, ChunkGenerator<C> parent, org.bukkit.World bukkitWorld) {
         super(generatorAccess, null, null);
         this.parent = parent;
-        this.world = world;
+        this.bukkitWorld = bukkitWorld;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
         int chunkX = iChunkAccess.getPos().x;
         int chunkZ = iChunkAccess.getPos().z;
 
-        org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(world);
+        org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(bukkitWorld);
 
         if (chunkX > 1 || chunkZ > 1) {
             chunkData.setRegion(0, 0, 0, 16, 256, 16, org.bukkit.Material.AIR);
@@ -79,6 +82,23 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
             if (sections[sec] != null) {
                 ChunkSection section = sections[sec];
                 csect[sec] = section;
+            }
+        }
+
+        if (craftData.getTiles() != null) {
+            Iterator var20 = craftData.getTiles().iterator();
+            CraftWorld craftWorld = (CraftWorld) bukkitWorld;
+
+            while(var20.hasNext()) {
+                BlockPosition pos = (BlockPosition)var20.next();
+                int tx = pos.getX();
+                int ty = pos.getY();
+                int tz = pos.getZ();
+                Block block = craftData.getTypeId(tx, ty, tz).getBlock();
+                if (block.isTileEntity()) {
+                    TileEntity tile = ((ITileEntity)block).createTile(craftWorld.getHandle());
+                    iChunkAccess.setTileEntity(new BlockPosition((chunkX << 4) + tx, ty, (chunkZ << 4) + tz), tile);
+                }
             }
         }
     }
