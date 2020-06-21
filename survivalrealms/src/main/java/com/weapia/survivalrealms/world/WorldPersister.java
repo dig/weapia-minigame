@@ -45,29 +45,15 @@ public class WorldPersister {
     }
 
     public void persistWorld(UUID playerUUID, File worldFolder) throws IOException {
-        log.info("yes");
         GridFSFindIterable worlds = findWorlds(playerUUID);
         GridFSFile latestWorld = getLatestWorld(worlds);
-        log.info("ik");
         int newVersion = latestWorld == null ? 0 : getVersion(latestWorld) + 1;
-        log.info("new version is " + newVersion);
 
         String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
 
-        log.info("worldZipPath = " + worldZipPath);
-
-        // dunno, session files dont work when unzipping
-        /*File worldSessionLock = new File(worldFolder.getPath() + File.separator + "session.lock");
-        if (worldSessionLock.exists()) {
-            log.info("deleting session lock ye " + worldSessionLock.getPath());
-            worldSessionLock.delete();
-        }*/
-
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
-
-        log.info("worldZip = " + worldZip.getPath());
 
         InputStream streamToUploadFrom = new FileInputStream(worldZip);
         GridFSUploadOptions options = new GridFSUploadOptions()
@@ -77,11 +63,9 @@ public class WorldPersister {
         worldBucket.uploadFromStream(worldFileName, streamToUploadFrom, options);
 
         for (GridFSFile oldWorld : worlds) {
-            log.info("deleting old world");
             worldBucket.delete(oldWorld.getObjectId());
         }
 
-        log.info("DELETE!");
         FileUtil.deleteDirectory(worldFolder);
         worldZip.delete();
     }
