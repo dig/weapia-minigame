@@ -137,7 +137,12 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
 
     @Override
     public void createStructures(BiomeManager biomemanager, IChunkAccess ichunkaccess, ChunkGenerator<?> chunkgenerator, DefinedStructureManager definedstructuremanager) {
-        parent.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
+        int chunkX = ichunkaccess.getPos().x;
+        int chunkZ = ichunkaccess.getPos().z;
+
+        if (chunkX == 0 && chunkZ == 0) {
+            parent.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
+        }
     }
 
     @Override
