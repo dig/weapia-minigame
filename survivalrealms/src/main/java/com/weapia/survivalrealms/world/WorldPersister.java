@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.world;
 
+import com.google.common.collect.Lists;
 import com.google.inject.*;
 import com.mongodb.client.*;
 import com.mongodb.client.gridfs.*;
@@ -10,6 +11,7 @@ import net.sunken.common.util.*;
 import org.bson.*;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -50,7 +52,7 @@ public class WorldPersister {
 
         String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
-        ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
+        ZipUtility.zip(Arrays.asList(worldFolder.listFiles()), worldZipPath);
         File worldZip = new File(worldZipPath);
 
         InputStream streamToUploadFrom = new FileInputStream(worldZip);
@@ -75,6 +77,7 @@ public class WorldPersister {
         if (latestWorld != null) {
             String worldFileName = playerUUID.toString();
             String worldZipPath = targetFolder.getPath() + File.separator + worldFileName + ".zip";
+            String worldFolder = targetFolder.getPath() + File.separator + worldFileName;
 
             FileOutputStream streamToDownloadTo = new FileOutputStream(new File(worldZipPath));
             worldBucket.downloadToStream(latestWorld.getObjectId(), streamToDownloadTo);
@@ -82,7 +85,7 @@ public class WorldPersister {
 
             File worldZip = new File(worldZipPath);
             if (worldZip.exists()) {
-                ZipUtility.unzip(worldZipPath, targetFolder.getPath());
+                ZipUtility.unzip(worldZipPath, worldFolder);
                 worldZip.delete();
             }
         }
