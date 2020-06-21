@@ -51,6 +51,12 @@ public class WorldPersister {
         String worldFileName = playerUUID.toString();
         String worldZipPath = worldFolder.getParent() + File.separator + worldFileName + ".zip";
 
+        // dunno, session locks don't work
+        File sessionLock = new File(worldFolder.getPath() + File.separator + "session.lock");
+        if (sessionLock.exists()) {
+            sessionLock.delete();
+        }
+
         ZipUtility.zip(Collections.singletonList(worldFolder), worldZipPath);
         File worldZip = new File(worldZipPath);
 
