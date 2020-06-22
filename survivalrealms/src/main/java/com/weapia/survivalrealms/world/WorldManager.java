@@ -1,20 +1,20 @@
 package com.weapia.survivalrealms.world;
 
-import com.weapia.survivalrealms.Constants;
+import com.weapia.survivalrealms.*;
 import com.weapia.survivalrealms.config.*;
-import com.weapia.survivalrealms.player.Forwarder;
-import com.weapia.survivalrealms.player.SurvivalPlayer;
 import com.weapia.survivalrealms.player.WorldType;
+import com.weapia.survivalrealms.player.*;
 import lombok.extern.java.*;
 import net.minecraft.server.v1_15_R1.*;
 import net.sunken.common.config.*;
 import net.sunken.common.inject.*;
-import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.*;
+import net.sunken.common.player.module.*;
+import net.sunken.common.util.*;
 import net.sunken.core.util.*;
-import org.bukkit.*;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_15_R1.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
@@ -23,10 +23,11 @@ import org.bukkit.plugin.java.*;
 import org.bukkit.scheduler.*;
 
 import javax.inject.*;
-import java.io.IOException;
-import java.lang.reflect.Field;
+import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.*;
 
 @Log
 @Singleton
@@ -57,15 +58,10 @@ public class WorldManager implements Facet, Enableable, Listener {
 
                 World loadedWorld = loadedWorlds.get(player.getUniqueId());
                 if (loadedWorld != null) {
-                    teleportWorld(player.getUniqueId(), loadedWorld);
+                    teleportToWorld(player.getUniqueId(), loadedWorld);
                 }
             } else {
-                try {
-                    loadWorld(player);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    log.severe(String.format("Unable to load world (%s)", player.getUniqueId()));
-                }
+                loadWorld(player);
             }
         }
     }
@@ -111,18 +107,27 @@ public class WorldManager implements Facet, Enableable, Listener {
 
         if (loadingWorlds.contains(playerUUID)) {
             loadingWorlds.remove(playerUUID);
-            teleportWorld(playerUUID, newlyLoadedWorld);
+            teleportToWorld(playerUUID, newlyLoadedWorld);
         }
     }
 
-    private void loadWorld(Player player) throws IOException {
+    private void loadWorld(Player player) {
         log.info(String.format("Loading world for %s", player.getName()));
 
-        worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
-        loadingWorlds.add(player.getUniqueId());
-        World world = new WorldCreator(player.getUniqueId().toString())
-                .createWorld();
-        loadedWorlds.put(player.getUniqueId(), world);
+        AsyncHelper.executor().execute(() -> {
+            try {
+                worldPersister.downloadWorld(player.getUniqueId(), plugin.getServer().getWorldContainer());
+            } catch (IOException e) {
+                log.log(Level.SEVERE, String.format("Unable to download world (%s)", player.getUniqueId()), e);
+                return;
+            }
+
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                loadingWorlds.add(player.getUniqueId());
+                World world = new WorldCreator(player.getUniqueId().toString()).createWorld();
+                loadedWorlds.put(player.getUniqueId(), world);
+            });
+        });
     }
 
     private boolean isUnloadWorldScheduled(Player player) {
@@ -132,11 +137,7 @@ public class WorldManager implements Facet, Enableable, Listener {
     private void scheduleUnloadWorld(Player player) {
         BukkitTask unloadWorldTask = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!player.isOnline()) {
-                try {
-                    unloadWorld(player.getUniqueId());
-                } catch (IOException e) {
-                    log.severe(String.format("Unable to unload world (%s)", player.getUniqueId()));
-                }
+                unloadWorld(player.getUniqueId());
             }
             unscheduleUnloadWorld(player);
         }, UNLOAD_AFTER_TICKS_OFFLINE);
@@ -150,7 +151,7 @@ public class WorldManager implements Facet, Enableable, Listener {
         }
     }
 
-    private void unloadWorld(UUID playerUUID) throws IOException {
+    private void unloadWorld(UUID playerUUID) {
         log.info(String.format("Unloading world for %s", playerUUID));
 
         World worldToUnload = loadedWorlds.remove(playerUUID);
@@ -162,12 +163,18 @@ public class WorldManager implements Facet, Enableable, Listener {
                     });
 
             if (Bukkit.unloadWorld(worldToUnload, true)) {
-                worldPersister.persistWorld(playerUUID, worldToUnload.getWorldFolder());
+                AsyncHelper.executor().execute(() -> {
+                    try {
+                        worldPersister.persistWorld(playerUUID, worldToUnload.getWorldFolder());
+                    } catch (IOException e) {
+                        log.log(Level.SEVERE, String.format("Could not persist world for %s", playerUUID), e);
+                    }
+                });
             }
         }
     }
 
-    private void unloadAllWorlds() throws IOException {
+    private void unloadAllWorlds() {
         for (UUID playerUUID : loadedWorlds.keySet()) {
             unloadWorld(playerUUID);
         }
@@ -189,14 +196,14 @@ public class WorldManager implements Facet, Enableable, Listener {
             ChunkOverrider<?> overrider = new ChunkOverrider<>(generatorAccess, chunkGenerator, world);
             chunkGeneratorField.set(playerChunkMap, overrider);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Could not set generator on world", e);
         }
     }
 
-    private void teleportWorld(UUID playerUUID, World world) {
-        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(playerUUID);
-        abstractPlayerOptional
-                .map(abstractPlayer -> (SurvivalPlayer) abstractPlayer)
+    private void teleportToWorld(UUID playerUUID, World world) {
+        Optional<AbstractPlayer> abstractPlayer = playerManager.get(playerUUID);
+        abstractPlayer
+                .map(SurvivalPlayer.class::cast)
                 .ifPresent(survivalPlayer -> {
                     Player player = survivalPlayer.toPlayer().get();
 
@@ -230,10 +237,6 @@ public class WorldManager implements Facet, Enableable, Listener {
 
     @Override
     public void disable() {
-        try {
-            unloadAllWorlds();
-        } catch (IOException e) {
-            log.severe("Unable to unload all worlds.");
-        }
+        unloadAllWorlds();
     }
 }
