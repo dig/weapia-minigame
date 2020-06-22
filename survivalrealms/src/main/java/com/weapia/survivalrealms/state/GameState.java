@@ -3,8 +3,14 @@ package com.weapia.survivalrealms.state;
 import com.google.inject.Inject;
 import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.config.WorldConfiguration;
+import com.weapia.survivalrealms.player.AdventureType;
+import com.weapia.survivalrealms.player.SurvivalPlayer;
 import com.weapia.survivalrealms.world.WorldManager;
 import net.sunken.common.config.InjectConfig;
+import net.sunken.common.player.packet.PlayerRequestServerPacket;
+import net.sunken.common.server.Game;
+import net.sunken.common.server.Server;
+import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.util.ActionBar;
@@ -13,8 +19,10 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.util.UUID;
@@ -88,5 +96,20 @@ public class GameState extends EventGameState {
     @Override
     public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
         return worldConfiguration.isAdventure() || instigator.getWorld().getName().equals(instigator.getUniqueId().toString());
+    }
+
+    @EventHandler
+    public void onPlayerPortal(PlayerPortalEvent event) {
+        Player player = event.getPlayer();
+        if (!worldConfiguration.isAdventure()) {
+            event.setCancelled(true);
+            player.sendMessage("sending");
+            playerManager.get(player.getUniqueId())
+                    .map(SurvivalPlayer.class::cast)
+                    .ifPresent(survivalPlayer -> {
+                        survivalPlayer.setAdventureType(AdventureType.NETHER);
+                        AsyncHelper.executor().execute(() -> packetUtil.send(new PlayerRequestServerPacket(survivalPlayer.getUuid(), Server.Type.INSTANCE, Game.SURVIVAL_REALMS_ADVENTURE, true)));
+                    });
+        }
     }
 }
