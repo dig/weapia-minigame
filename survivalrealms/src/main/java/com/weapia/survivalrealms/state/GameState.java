@@ -2,9 +2,11 @@ package com.weapia.survivalrealms.state;
 
 import com.google.inject.Inject;
 import com.weapia.survivalrealms.config.WorldConfiguration;
+import com.weapia.survivalrealms.world.WorldManager;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -12,24 +14,25 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
+import java.util.UUID;
+
 public class GameState extends EventGameState {
 
+    @Inject
+    private WorldManager worldManager;
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
 
     @Override
     public void start(BaseGameState previous) {
-
     }
 
     @Override
     public void stop(BaseGameState next) {
-
     }
 
     @Override
     public void tick(int tickCount) {
-
     }
 
     @Override
@@ -38,16 +41,22 @@ public class GameState extends EventGameState {
 
     @Override
     public void onQuit(Player player) {
-
     }
 
     @Override
     public void onDeath(PlayerDeathEvent event) {
-
     }
 
     @Override
     public void onRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+
+        Location target = worldConfiguration.getSpawn().toLocation();
+        if (worldManager.hasWorld(uuid)) {
+            target = worldManager.getWorld(uuid).getSpawnLocation();
+        }
+        event.setRespawnLocation(target);
     }
 
     @Override

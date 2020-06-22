@@ -57,7 +57,7 @@ public class WorldManager implements Facet, Enableable, Listener {
 
                 World loadedWorld = loadedWorlds.get(player.getUniqueId());
                 if (loadedWorld != null) {
-                    player.teleport(loadedWorld.getSpawnLocation());
+                    teleportWorld(player.getUniqueId(), loadedWorld);
                 }
             } else {
                 try {
@@ -111,30 +111,7 @@ public class WorldManager implements Facet, Enableable, Listener {
 
         if (loadingWorlds.contains(playerUUID)) {
             loadingWorlds.remove(playerUUID);
-
-            // teleport player
-            Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(playerUUID);
-            abstractPlayerOptional
-                    .map(abstractPlayer -> (SurvivalPlayer) abstractPlayer)
-                    .ifPresent(survivalPlayer -> {
-                        Player player = survivalPlayer.toPlayer().get();
-                        Location target = newlyLoadedWorld.getSpawnLocation();
-
-                        Forwarder forwarder = survivalPlayer.getForwarder();
-                        WorldType worldType = survivalPlayer.getWorldType();
-                        Location lastLocation = survivalPlayer.getLastLocation();
-
-                        if (forwarder != null && worldType != null) {
-                            if (forwarder == Forwarder.REALM) {
-                                survivalPlayer.setForwarder(Forwarder.NONE);
-                            } else if (forwarder == Forwarder.NONE && worldType == WorldType.REALM && lastLocation != null) {
-                                lastLocation.setWorld(newlyLoadedWorld);
-                                target = lastLocation;
-                            }
-                        }
-
-                        player.teleport(target);
-                    });
+            teleportWorld(playerUUID, newlyLoadedWorld);
         }
     }
 
@@ -214,6 +191,31 @@ public class WorldManager implements Facet, Enableable, Listener {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    private void teleportWorld(UUID playerUUID, World world) {
+        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(playerUUID);
+        abstractPlayerOptional
+                .map(abstractPlayer -> (SurvivalPlayer) abstractPlayer)
+                .ifPresent(survivalPlayer -> {
+                    Player player = survivalPlayer.toPlayer().get();
+                    Location target = world.getSpawnLocation();
+
+                    Forwarder forwarder = survivalPlayer.getForwarder();
+                    WorldType worldType = survivalPlayer.getWorldType();
+                    Location lastLocation = survivalPlayer.getLastLocation();
+
+                    if (forwarder != null && worldType != null) {
+                        if (forwarder == Forwarder.REALM) {
+                            survivalPlayer.setForwarder(Forwarder.NONE);
+                        } else if (forwarder == Forwarder.NONE && worldType == WorldType.REALM && lastLocation != null) {
+                            lastLocation.setWorld(world);
+                            target = lastLocation;
+                        }
+                    }
+
+                    player.teleport(target);
+                });
     }
 
     public boolean hasWorld(UUID uuid) {
