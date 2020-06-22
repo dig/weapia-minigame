@@ -49,5 +49,4 @@ public class RealmCommand extends BukkitCommand {
         }
         return false;
     }
-
 }
