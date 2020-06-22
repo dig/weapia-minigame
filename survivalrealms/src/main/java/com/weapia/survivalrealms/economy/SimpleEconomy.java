@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.economy;
 
+import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.player.SurvivalPlayer;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -50,12 +51,12 @@ public class SimpleEconomy implements Economy {
 
     @Override
     public String currencyNamePlural() {
-        return ChatColor.GOLD + Symbol.LARGE_DOT;
+        return Constants.ECONOMY_TYPE;
     }
 
     @Override
     public String currencyNameSingular() {
-        return ChatColor.GOLD + Symbol.LARGE_DOT;
+        return Constants.ECONOMY_TYPE;
     }
 
     @Override
