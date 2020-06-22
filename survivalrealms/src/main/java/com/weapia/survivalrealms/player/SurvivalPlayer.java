@@ -14,8 +14,10 @@ import net.sunken.core.scoreboard.CustomScoreboard;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.MongoBukkitUtil;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -24,6 +26,8 @@ public class SurvivalPlayer extends CorePlayer {
 
     private final WorldConfiguration worldConfiguration;
 
+    @Getter @Setter
+    private AdventureType adventureType;
     @Getter @Setter
     private WorldType worldType;
     @Getter @Setter
@@ -38,6 +42,7 @@ public class SurvivalPlayer extends CorePlayer {
         super(uuid, username, scoreboardRegistry, pluginInform);
         this.worldConfiguration = worldConfiguration;
 
+        this.adventureType = AdventureType.OVERWORLD;
         this.worldType = WorldType.SPAWN;
         this.lastLocation = null;
 
@@ -50,14 +55,20 @@ public class SurvivalPlayer extends CorePlayer {
         super.setup(player);
         player.getInventory().clear();
 
+        Location target;
         if (!worldConfiguration.isAdventure()) {
-            Location target = worldConfiguration.getSpawn().toLocation();
+            target = worldConfiguration.getSpawn().toLocation();
             if (worldType == WorldType.SPAWN && lastLocation != null) {
                 lastLocation.setWorld(target.getWorld());
                 target = lastLocation;
             }
-            player.teleport(target);
+        } else {
+            target = Bukkit.getWorld("world").getSpawnLocation();
+            if (adventureType == AdventureType.NETHER) {
+                target = Bukkit.getWorld("world_nether").getSpawnLocation();
+            }
         }
+        player.teleport(target);
     }
 
     @Override
@@ -84,6 +95,7 @@ public class SurvivalPlayer extends CorePlayer {
         if (document.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY)) {
             Document doc = (Document) document.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY);
 
+            adventureType = (AdventureType) MongoUtil.getEnumOrDefault(doc, AdventureType.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY, AdventureType.OVERWORLD);
             worldType = (WorldType) MongoUtil.getEnumOrDefault(doc, WorldType.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, WorldType.SPAWN);
             if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
                 lastLocation = MongoBukkitUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY), false);
@@ -101,18 +113,21 @@ public class SurvivalPlayer extends CorePlayer {
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY, worldLoadedInstance)
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, coins);
 
-        if (!worldConfiguration.isAdventure()) {
-            toPlayer().ifPresent(player ->
-                    document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(player.getLocation(), false))
-                            .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
-                                    player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN.toString() : WorldType.REALM.toString())
-            );
-        } else {
-            document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, worldType.toString());
-            if (lastLocation != null) {
-                document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(lastLocation, false));
+        toPlayer().ifPresent(player -> {
+            if (!worldConfiguration.isAdventure()) {
+                document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
+                                player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN.toString() : WorldType.REALM.toString())
+                        .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY, adventureType.toString())
+                        .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(player.getLocation(), false));
+            } else {
+                World world = player.getLocation().getWorld();
+                document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, worldType.toString())
+                        .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY, world.getName().equals("world") ? AdventureType.OVERWORLD.toString() : AdventureType.NETHER.toString());
+                if (lastLocation != null) {
+                    document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(lastLocation, false));
+                }
             }
-        }
+        });
 
         return super.toDocument()
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY, document);
