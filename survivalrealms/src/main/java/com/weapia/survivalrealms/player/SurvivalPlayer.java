@@ -104,7 +104,6 @@ public class SurvivalPlayer extends CorePlayer {
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, forwarder)
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY, worldLoadedInstance)
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, coins);
-
         toPlayer().ifPresent(player ->
             document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(player.getLocation(), false))
                     .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
