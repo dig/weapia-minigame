@@ -38,8 +38,8 @@ public class SurvivalPlayer extends CorePlayer {
         super(uuid, username, scoreboardRegistry, pluginInform);
         this.worldConfiguration = worldConfiguration;
 
-        this.forwarder = null;
-        this.worldType = null;
+        this.forwarder = Forwarder.NONE;
+        this.worldType = WorldType.SPAWN;
         this.lastLocation = null;
 
         this.worldLoadedInstance = null;
@@ -65,18 +65,18 @@ public class SurvivalPlayer extends CorePlayer {
 
         // teleport to last location
         if (!worldConfiguration.isAdventure()) {
-            Location spawn = worldConfiguration.getSpawn().toLocation();
+            Location target = worldConfiguration.getSpawn().toLocation();
+
             if (forwarder != null && worldType != null) {
                 if (forwarder == Forwarder.SPAWN) {
-                    player.teleport(worldConfiguration.getSpawn().toLocation());
                     forwarder = Forwarder.NONE;
-                } else if (forwarder == Forwarder.NONE && worldType == WorldType.SPAWN) {
-                    lastLocation.setWorld(spawn.getWorld());
-                    player.teleport(lastLocation);
+                } else if (forwarder == Forwarder.NONE && worldType == WorldType.SPAWN && lastLocation != null) {
+                    lastLocation.setWorld(target.getWorld());
+                    target = lastLocation;
                 }
-            } else {
-                player.teleport(spawn);
             }
+
+            player.teleport(target);
         }
     }
 
