@@ -7,10 +7,11 @@ import lombok.NonNull;
 import lombok.Setter;
 import net.sunken.common.database.DatabaseHelper;
 import net.sunken.common.player.Rank;
+import net.sunken.common.util.MongoUtil;
 import net.sunken.core.PluginInform;
 import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
-import net.sunken.core.util.MongoUtil;
+import net.sunken.core.util.MongoBukkitUtil;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -78,7 +79,7 @@ public class SurvivalPlayer extends CorePlayer {
 
             worldType = (WorldType) MongoUtil.getEnumOrDefault(doc, WorldType.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, WorldType.SPAWN);
             if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
-                lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY), false);
+                lastLocation = MongoBukkitUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY), false);
             }
 
             worldLoadedInstance = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY);
@@ -95,12 +96,12 @@ public class SurvivalPlayer extends CorePlayer {
 
         if (!worldConfiguration.isAdventure()) {
             toPlayer().ifPresent(player ->
-                    document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(player.getLocation(), false))
+                    document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(player.getLocation(), false))
                             .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
                                     player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN.toString() : WorldType.REALM.toString())
             );
         } else {
-            document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(lastLocation, false))
+            document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(lastLocation, false))
                     .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, worldType.toString());
         }
 
