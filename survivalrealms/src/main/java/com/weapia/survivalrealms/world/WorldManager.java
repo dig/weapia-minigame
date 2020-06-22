@@ -48,7 +48,7 @@ public class WorldManager implements Facet, Enableable, Listener {
     private final Map<UUID, World> loadedWorlds = new HashMap<>();
     private final Map<UUID, BukkitTask> scheduledUnloadWorlds = new HashMap<>();
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
@@ -211,14 +211,12 @@ public class WorldManager implements Facet, Enableable, Listener {
                     WorldType worldType = survivalPlayer.getWorldType();
                     Location lastLocation = survivalPlayer.getLastLocation();
 
-                    if (forwarder != null && worldType != null) {
-                        if (forwarder == Forwarder.REALM) {
-                            survivalPlayer.setForwarder(Forwarder.NONE);
-                            player.teleport(world.getSpawnLocation());
-                        } else if (forwarder == Forwarder.NONE && worldType == WorldType.REALM && lastLocation != null) {
-                            lastLocation.setWorld(world);
-                            player.teleport(lastLocation);
-                        }
+                    if (forwarder == Forwarder.REALM) {
+                        survivalPlayer.setForwarder(Forwarder.NONE);
+                        player.teleport(world.getSpawnLocation());
+                    } else if (forwarder == Forwarder.NONE && worldType == WorldType.REALM && lastLocation != null) {
+                        lastLocation.setWorld(world);
+                        player.teleport(lastLocation);
                     }
                 });
     }
