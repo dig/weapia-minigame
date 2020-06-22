@@ -111,7 +111,6 @@ public class CustomChunkData implements ChunkGenerator.ChunkData {
                         }
                     }
                 }
-
             }
         }
     }
