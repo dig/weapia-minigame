@@ -213,7 +213,7 @@ public class WorldManager implements Facet, Enableable, Listener {
                             lastLocation.setWorld(target.getWorld());
                             target = lastLocation;
                         }
-                        player.teleport(lastLocation);
+                        player.teleport(target);
                     }
                 });
     }
