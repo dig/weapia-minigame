@@ -47,7 +47,7 @@ public class WorldManager implements Facet, Enableable, Listener {
     private final Map<UUID, World> loadedWorlds = new HashMap<>();
     private final Map<UUID, BukkitTask> scheduledUnloadWorlds = new HashMap<>();
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
