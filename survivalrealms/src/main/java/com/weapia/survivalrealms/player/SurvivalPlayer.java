@@ -10,6 +10,7 @@ import net.sunken.common.player.Rank;
 import net.sunken.common.util.MongoUtil;
 import net.sunken.core.PluginInform;
 import net.sunken.core.player.CorePlayer;
+import net.sunken.core.scoreboard.CustomScoreboard;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.MongoBukkitUtil;
 import org.bson.Document;
@@ -41,29 +42,13 @@ public class SurvivalPlayer extends CorePlayer {
         this.lastLocation = null;
 
         this.worldLoadedInstance = null;
-        this.coins = 0;
+        this.coins = Constants.ECONOMY_STARTING_AMOUNT;
     }
 
     @Override
     public void setup(@NonNull Player player) {
         super.setup(player);
         player.getInventory().clear();
-
-        setScoreboard(player, scoreboard -> {
-            scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
-
-            scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
-            scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
-            scoreboard.createEntry("Spacer2", ChatColor.GREEN + " ", 8);
-
-            scoreboard.createEntry("CoinTitle", ChatColor.WHITE + "Coins", 7);
-            scoreboard.createEntry("CoinValue", String.format(Constants.ECONOMY_TYPE_AMOUNT, coins), 6);
-            scoreboard.createEntry("Spacer3", ChatColor.BLACK + " ", 5);
-
-            scoreboard.createEntry("WorldTitle", ChatColor.WHITE + "World", 4);
-            scoreboard.createEntry("WorldValue", worldConfiguration.isAdventure() ? Constants.WORLD_RESOURCE : Constants.WORLD_REALM, 3);
-            scoreboard.createEntry("Spacer4", ChatColor.GOLD + " ", 2);
-        });
 
         if (!worldConfiguration.isAdventure()) {
             Location target = worldConfiguration.getSpawn().toLocation();
@@ -73,6 +58,24 @@ public class SurvivalPlayer extends CorePlayer {
             }
             player.teleport(target);
         }
+    }
+
+    @Override
+    protected boolean setupScoreboard(@NonNull CustomScoreboard scoreboard) {
+        scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
+
+        scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
+        scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
+        scoreboard.createEntry("Spacer2", ChatColor.GREEN + " ", 8);
+
+        scoreboard.createEntry("CoinTitle", ChatColor.WHITE + "Coins", 7);
+        scoreboard.createEntry("CoinValue", String.format(Constants.ECONOMY_TYPE_AMOUNT, coins), 6);
+        scoreboard.createEntry("Spacer3", ChatColor.BLACK + " ", 5);
+
+        scoreboard.createEntry("WorldTitle", ChatColor.WHITE + "World", 4);
+        scoreboard.createEntry("WorldValue", worldConfiguration.isAdventure() ? Constants.WORLD_RESOURCE : Constants.WORLD_REALM, 3);
+        scoreboard.createEntry("Spacer4", ChatColor.GOLD + " ", 2);
+        return true;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class SurvivalPlayer extends CorePlayer {
             }
 
             worldLoadedInstance = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY);
-            coins = doc.getInteger(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, 0);
+            coins = doc.getInteger(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, Constants.ECONOMY_STARTING_AMOUNT);
         }
         return true;
     }

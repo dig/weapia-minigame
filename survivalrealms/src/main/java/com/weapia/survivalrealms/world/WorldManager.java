@@ -11,6 +11,7 @@ import net.sunken.common.inject.*;
 import net.sunken.common.player.*;
 import net.sunken.common.player.module.*;
 import net.sunken.common.util.*;
+import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.*;
 import org.bukkit.World;
 import org.bukkit.*;
@@ -39,6 +40,8 @@ public class WorldManager implements Facet, Enableable, Listener {
     private WorldPersister worldPersister;
     @Inject
     private PlayerManager playerManager;
+    @Inject
+    private ScoreboardRegistry scoreboardRegistry;
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
 
@@ -109,6 +112,23 @@ public class WorldManager implements Facet, Enableable, Listener {
             loadingWorlds.remove(playerUUID);
             teleportToWorld(playerUUID, newlyLoadedWorld);
         }
+    }
+
+    @EventHandler
+    public void onWorldSwitch(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        World world = player.getWorld();
+
+        String realmName = Constants.WORLD_REALM;
+        if (worldConfiguration.isAdventure()) {
+            realmName = Constants.WORLD_RESOURCE;
+        } else if (world.equals(worldConfiguration.getSpawn().toLocation().getWorld())) {
+            realmName = Constants.WORLD_SPAWN;
+        }
+
+        String finalRealmName = realmName;
+        scoreboardRegistry.get(player.getUniqueId().toString())
+                .ifPresent(scoreboard -> scoreboard.getEntry("WorldValue").update(finalRealmName));
     }
 
     private void loadWorld(Player player) {
