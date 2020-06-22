@@ -22,22 +22,24 @@ public class SetBalanceCommand extends BukkitCommand {
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
         if (args.length == 1 && isInteger(args[0])) {
             int amount = Integer.parseInt(args[0]);
-            abstractPlayerOptional.ifPresent(abstractPlayer -> {
-                SurvivalPlayer survivalPlayer = (SurvivalPlayer) abstractPlayer;
-                survivalPlayer.setCoins(amount);
-                commandSender.sendMessage(String.format(Constants.ECONOMY_BALANCE_SET, amount, survivalPlayer.getUsername()));
-            });
+            abstractPlayerOptional
+                    .map(SurvivalPlayer.class::cast)
+                    .ifPresent(survivalPlayer -> {
+                        survivalPlayer.setCoins(amount);
+                        commandSender.sendMessage(String.format(Constants.ECONOMY_BALANCE_SET, amount, survivalPlayer.getUsername()));
+                    });
             return true;
         }
 
         Optional<AbstractPlayer> targetOptional = playerManager.get(args[1]);
         if (args.length == 2 && isInteger(args[0]) && targetOptional.isPresent()) {
             int amount = Integer.parseInt(args[0]);
-            targetOptional.ifPresent(abstractPlayer -> {
-                SurvivalPlayer survivalPlayer = (SurvivalPlayer) abstractPlayer;
-                survivalPlayer.setCoins(amount);
-                commandSender.sendMessage(String.format(Constants.ECONOMY_BALANCE_SET, amount, survivalPlayer.getUsername()));
-            });
+            targetOptional
+                    .map(SurvivalPlayer.class::cast)
+                    .ifPresent(survivalPlayer -> {
+                        survivalPlayer.setCoins(amount);
+                        commandSender.sendMessage(String.format(Constants.ECONOMY_BALANCE_SET, amount, survivalPlayer.getUsername()));
+                    });
             return true;
         }
         return false;

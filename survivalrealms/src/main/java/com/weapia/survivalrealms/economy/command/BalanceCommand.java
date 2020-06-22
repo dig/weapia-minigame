@@ -14,10 +14,9 @@ public class BalanceCommand extends BukkitCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
-        abstractPlayerOptional.ifPresent(abstractPlayer -> {
-            SurvivalPlayer survivalPlayer = (SurvivalPlayer) abstractPlayer;
-            commandSender.sendMessage(String.format(Constants.ECONOMY_BALANCE, survivalPlayer.getCoins()));
-        });
+        abstractPlayerOptional
+                .map(SurvivalPlayer.class::cast)
+                .ifPresent(survivalPlayer -> commandSender.sendMessage(String.format(Constants.ECONOMY_BALANCE, survivalPlayer.getCoins())));
         return false;
     }
 }
