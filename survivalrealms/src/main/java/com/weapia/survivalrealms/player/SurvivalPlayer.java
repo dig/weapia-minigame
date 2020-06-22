@@ -101,8 +101,10 @@ public class SurvivalPlayer extends CorePlayer {
                                     player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN.toString() : WorldType.REALM.toString())
             );
         } else {
-            document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(lastLocation, false))
-                    .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, worldType.toString());
+            document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, worldType.toString());
+            if (lastLocation != null) {
+                document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(lastLocation, false));
+            }
         }
 
         return super.toDocument()
