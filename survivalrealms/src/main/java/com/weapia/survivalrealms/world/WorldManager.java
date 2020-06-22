@@ -199,7 +199,6 @@ public class WorldManager implements Facet, Enableable, Listener {
                 .map(abstractPlayer -> (SurvivalPlayer) abstractPlayer)
                 .ifPresent(survivalPlayer -> {
                     Player player = survivalPlayer.toPlayer().get();
-                    Location target = world.getSpawnLocation();
 
                     Forwarder forwarder = survivalPlayer.getForwarder();
                     WorldType worldType = survivalPlayer.getWorldType();
@@ -208,13 +207,12 @@ public class WorldManager implements Facet, Enableable, Listener {
                     if (forwarder != null && worldType != null) {
                         if (forwarder == Forwarder.REALM) {
                             survivalPlayer.setForwarder(Forwarder.NONE);
+                            player.teleport(world.getSpawnLocation());
                         } else if (forwarder == Forwarder.NONE && worldType == WorldType.REALM && lastLocation != null) {
                             lastLocation.setWorld(world);
-                            target = lastLocation;
+                            player.teleport(lastLocation);
                         }
                     }
-
-                    player.teleport(target);
                 });
     }
 

@@ -58,7 +58,7 @@ public class SurvivalPlayer extends CorePlayer {
             scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 6);
             scoreboard.createEntry("Spacer2", ChatColor.GREEN + " ", 5);
 
-            scoreboard.createEntry("CoinTitle", ChatColor.WHITE + "Coin", 4);
+            scoreboard.createEntry("CoinTitle", ChatColor.WHITE + "Coins", 4);
             scoreboard.createEntry("CoinValue", String.format(Constants.ECONOMY_TYPE_AMOUNT, coins), 3);
             scoreboard.createEntry("Spacer3", ChatColor.BLACK + " ", 2);
         });
