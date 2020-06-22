@@ -1,18 +1,16 @@
 package com.weapia.survivalrealms.economy;
 
+import com.google.inject.Inject;
 import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.player.SurvivalPlayer;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.module.PlayerManager;
-import net.sunken.common.util.Symbol;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;

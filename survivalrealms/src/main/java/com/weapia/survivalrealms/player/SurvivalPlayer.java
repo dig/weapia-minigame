@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.player;
 
+import com.weapia.survivalrealms.config.WorldConfiguration;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -18,17 +19,29 @@ import java.util.UUID;
 
 public class SurvivalPlayer extends CorePlayer {
 
+    private final WorldConfiguration worldConfiguration;
+
+    @Getter @Setter
+    private Forwarder forwarder;
     @Getter
-    private String world;
+    private WorldType worldType;
     @Getter
     private Location lastLocation;
+
+    @Getter
+    private String worldLoadedInstance;
     @Getter @Setter
     private int coins;
 
-    public SurvivalPlayer(UUID uuid, String username, ScoreboardRegistry scoreboardRegistry, PluginInform pluginInform) {
+    public SurvivalPlayer(UUID uuid, String username, ScoreboardRegistry scoreboardRegistry, PluginInform pluginInform, WorldConfiguration worldConfiguration) {
         super(uuid, username, scoreboardRegistry, pluginInform);
-        this.world = null;
+        this.worldConfiguration = worldConfiguration;
+
+        this.forwarder = null;
+        this.worldType = null;
         this.lastLocation = null;
+
+        this.worldLoadedInstance = null;
         this.coins = 0;
     }
 
@@ -43,6 +56,20 @@ public class SurvivalPlayer extends CorePlayer {
             scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 3);
             scoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 2);
         });
+
+        // teleport to last location
+        Location spawn = worldConfiguration.getSpawn().toLocation();
+        if (forwarder != null && worldType != null) {
+            if (forwarder == Forwarder.SPAWN) {
+                player.teleport(worldConfiguration.getSpawn().toLocation());
+                forwarder = Forwarder.NONE;
+            } else if (forwarder == Forwarder.NONE && worldType == WorldType.SPAWN) {
+                lastLocation.setWorld(spawn.getWorld());
+                player.teleport(lastLocation);
+            }
+        } else {
+            player.teleport(spawn);
+        }
     }
 
     @Override
@@ -50,10 +77,14 @@ public class SurvivalPlayer extends CorePlayer {
         super.fromDocument(document);
         if (document.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY)) {
             Document doc = (Document) document.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY);
-            world = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY);
+
+            forwarder = doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, Forwarder.NONE);
+            worldType = doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, WorldType.SPAWN);
             if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
-                lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY));
+                lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY), false);
             }
+
+            worldLoadedInstance = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY);
             coins = doc.getInteger(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, 0);
         }
         return true;
@@ -62,9 +93,15 @@ public class SurvivalPlayer extends CorePlayer {
     @Override
     public Document toDocument() {
         Document document = new Document()
-                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, world)
+                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, forwarder)
+                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY, worldLoadedInstance)
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, coins);
-        toPlayer().ifPresent(player -> document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(player.getLocation())));
+
+        toPlayer().ifPresent(player ->
+            document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(player.getLocation(), false))
+                    .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
+                            player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN : WorldType.REALM)
+        );
 
         return super.toDocument()
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY, document);

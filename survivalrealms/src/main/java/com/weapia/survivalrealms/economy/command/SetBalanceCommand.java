@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.economy.command;
 
+import com.google.inject.Inject;
 import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.player.SurvivalPlayer;
 import net.sunken.common.command.Command;
@@ -9,7 +10,6 @@ import net.sunken.common.player.module.PlayerManager;
 import net.sunken.core.command.BukkitCommand;
 import org.bukkit.command.CommandSender;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
 @Command(aliases = {"setbalance"}, usage = "/setbalance <amount> [player]", rank = Rank.ADMIN, min = 1, max = 2)

@@ -2,15 +2,19 @@ package com.weapia.survivalrealms.world;
 
 import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.config.*;
+import com.weapia.survivalrealms.player.Forwarder;
+import com.weapia.survivalrealms.player.SurvivalPlayer;
+import com.weapia.survivalrealms.player.WorldType;
 import lombok.extern.java.*;
 import net.minecraft.server.v1_15_R1.*;
 import net.sunken.common.config.*;
 import net.sunken.common.inject.*;
+import net.sunken.common.player.AbstractPlayer;
+import net.sunken.common.player.module.PlayerManager;
 import net.sunken.core.util.*;
 import org.bukkit.*;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_15_R1.util.DummyGeneratorAccess;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
@@ -19,7 +23,6 @@ import org.bukkit.plugin.java.*;
 import org.bukkit.scheduler.*;
 
 import javax.inject.*;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -33,6 +36,8 @@ public class WorldManager implements Facet, Enableable, Listener {
     private JavaPlugin plugin;
     @Inject
     private WorldPersister worldPersister;
+    @Inject
+    private PlayerManager playerManager;
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
 
@@ -107,10 +112,28 @@ public class WorldManager implements Facet, Enableable, Listener {
         if (loadingWorlds.contains(playerUUID)) {
             loadingWorlds.remove(playerUUID);
 
-            Player player = Bukkit.getPlayer(playerUUID);
-            if (player != null) {
-                player.teleport(newlyLoadedWorld.getSpawnLocation());
-            }
+            // teleport player
+            Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(playerUUID);
+            abstractPlayerOptional
+                    .map(abstractPlayer -> (SurvivalPlayer) abstractPlayer)
+                    .ifPresent(survivalPlayer -> {
+                        Player player = survivalPlayer.toPlayer().get();
+                        if (survivalPlayer.getForwarder() != null && survivalPlayer.getWorldType() != null) {
+                            Forwarder forwarder = survivalPlayer.getForwarder();
+                            WorldType worldType = survivalPlayer.getWorldType();
+
+                            if (forwarder == Forwarder.REALM) {
+                                player.teleport(newlyLoadedWorld.getSpawnLocation());
+                                survivalPlayer.setForwarder(Forwarder.NONE);
+                            } else if (forwarder == Forwarder.NONE && worldType == WorldType.REALM) {
+                                Location lastLocation = survivalPlayer.getLastLocation();
+                                lastLocation.setWorld(newlyLoadedWorld);
+                                player.teleport(lastLocation);
+                            }
+                        } else {
+                            player.teleport(newlyLoadedWorld.getSpawnLocation());
+                        }
+                    });
         }
     }
 
@@ -190,6 +213,14 @@ public class WorldManager implements Facet, Enableable, Listener {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean hasWorld(UUID uuid) {
+        return loadedWorlds.containsKey(uuid) || loadingWorlds.contains(uuid);
+    }
+
+    public World getWorld(UUID uuid) {
+        return loadedWorlds.get(uuid);
     }
 
     @Override

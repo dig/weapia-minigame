@@ -34,11 +34,6 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-        if (worldConfiguration.isAdventure()) {
-            // TODO: random teleport in world border
-        } else {
-            player.teleport(worldConfiguration.getSpawn().toLocation());
-        }
     }
 
     @Override
@@ -53,11 +48,6 @@ public class GameState extends EventGameState {
 
     @Override
     public void onRespawn(PlayerRespawnEvent event) {
-        if (worldConfiguration.isAdventure()) {
-            // TODO: random teleport in world border
-        } else {
-            event.setRespawnLocation(worldConfiguration.getSpawn().toLocation());
-        }
     }
 
     @Override
