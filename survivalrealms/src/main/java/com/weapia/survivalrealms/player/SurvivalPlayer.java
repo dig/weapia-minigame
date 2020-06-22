@@ -86,8 +86,8 @@ public class SurvivalPlayer extends CorePlayer {
         if (document.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY)) {
             Document doc = (Document) document.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY);
 
-            forwarder = doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, Forwarder.NONE);
-            worldType = doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, WorldType.SPAWN);
+            forwarder = (Forwarder) MongoUtil.getEnumOrDefault(doc, Forwarder.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, Forwarder.NONE);
+            worldType = (WorldType) MongoUtil.getEnumOrDefault(doc, WorldType.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, WorldType.SPAWN);
             if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
                 lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY), false);
             }
@@ -101,13 +101,13 @@ public class SurvivalPlayer extends CorePlayer {
     @Override
     public Document toDocument() {
         Document document = new Document()
-                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, forwarder)
+                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, forwarder.toString())
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY, worldLoadedInstance)
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, coins);
         toPlayer().ifPresent(player ->
             document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(player.getLocation(), false))
                     .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
-                            player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN : WorldType.REALM)
+                            player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN.toString() : WorldType.REALM.toString())
         );
 
         return super.toDocument()
