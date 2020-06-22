@@ -2,8 +2,8 @@ package com.weapia.survivalrealms.command;
 
 import com.google.inject.Inject;
 import com.weapia.survivalrealms.config.WorldConfiguration;
-import com.weapia.survivalrealms.player.Forwarder;
 import com.weapia.survivalrealms.player.SurvivalPlayer;
+import com.weapia.survivalrealms.player.WorldType;
 import com.weapia.survivalrealms.world.WorldManager;
 import net.sunken.common.command.Command;
 import net.sunken.common.config.InjectConfig;
@@ -36,7 +36,10 @@ public class RealmCommand extends BukkitCommand {
             Player player = (Player) commandSender;
             SurvivalPlayer survivalPlayer = (SurvivalPlayer) abstractPlayerOptional.get();
             if (worldConfiguration.isAdventure() || !worldManager.hasWorld(survivalPlayer.getUuid())) {
-                survivalPlayer.setForwarder(Forwarder.REALM);
+                if (survivalPlayer.getWorldType() != WorldType.REALM) {
+                    survivalPlayer.setLastLocation(null);
+                }
+                survivalPlayer.setWorldType(WorldType.REALM);
                 AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(survivalPlayer.getUuid(), Server.Type.INSTANCE, Game.SURVIVAL_REALMS, true)));
             } else {
                 World world = worldManager.getWorld(survivalPlayer.getUuid());

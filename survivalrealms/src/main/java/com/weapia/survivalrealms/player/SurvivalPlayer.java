@@ -23,10 +23,8 @@ public class SurvivalPlayer extends CorePlayer {
     private final WorldConfiguration worldConfiguration;
 
     @Getter @Setter
-    private Forwarder forwarder;
-    @Getter
     private WorldType worldType;
-    @Getter
+    @Getter @Setter
     private Location lastLocation;
 
     @Getter
@@ -38,7 +36,6 @@ public class SurvivalPlayer extends CorePlayer {
         super(uuid, username, scoreboardRegistry, pluginInform);
         this.worldConfiguration = worldConfiguration;
 
-        this.forwarder = Forwarder.NONE;
         this.worldType = WorldType.SPAWN;
         this.lastLocation = null;
 
@@ -63,17 +60,12 @@ public class SurvivalPlayer extends CorePlayer {
             scoreboard.createEntry("Spacer3", ChatColor.BLACK + " ", 2);
         });
 
-        // teleport to last location
         if (!worldConfiguration.isAdventure()) {
             Location target = worldConfiguration.getSpawn().toLocation();
-
-            if (forwarder == Forwarder.SPAWN) {
-                forwarder = Forwarder.NONE;
-            } else if (forwarder == Forwarder.NONE && worldType == WorldType.SPAWN && lastLocation != null) {
+            if (lastLocation != null) {
                 lastLocation.setWorld(target.getWorld());
                 target = lastLocation;
             }
-
             player.teleport(target);
         }
     }
@@ -84,7 +76,6 @@ public class SurvivalPlayer extends CorePlayer {
         if (document.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY)) {
             Document doc = (Document) document.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY);
 
-            forwarder = (Forwarder) MongoUtil.getEnumOrDefault(doc, Forwarder.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, Forwarder.NONE);
             worldType = (WorldType) MongoUtil.getEnumOrDefault(doc, WorldType.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, WorldType.SPAWN);
             if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
                 lastLocation = MongoUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY), false);
@@ -99,7 +90,6 @@ public class SurvivalPlayer extends CorePlayer {
     @Override
     public Document toDocument() {
         Document document = new Document()
-                .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_FORWARDER_KEY, forwarder.toString())
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY, worldLoadedInstance)
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, coins);
 
@@ -109,6 +99,9 @@ public class SurvivalPlayer extends CorePlayer {
                             .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
                                     player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN.toString() : WorldType.REALM.toString())
             );
+        } else {
+            document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoUtil.location(lastLocation, false))
+                    .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, worldType.toString());
         }
 
         return super.toDocument()

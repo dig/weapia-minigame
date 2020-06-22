@@ -206,16 +206,13 @@ public class WorldManager implements Facet, Enableable, Listener {
                 .map(SurvivalPlayer.class::cast)
                 .ifPresent(survivalPlayer -> {
                     Player player = survivalPlayer.toPlayer().get();
-
-                    Forwarder forwarder = survivalPlayer.getForwarder();
-                    WorldType worldType = survivalPlayer.getWorldType();
-                    Location lastLocation = survivalPlayer.getLastLocation();
-
-                    if (forwarder == Forwarder.REALM) {
-                        survivalPlayer.setForwarder(Forwarder.NONE);
-                        player.teleport(world.getSpawnLocation());
-                    } else if (forwarder == Forwarder.NONE && worldType == WorldType.REALM && lastLocation != null) {
-                        lastLocation.setWorld(world);
+                    if (survivalPlayer.getWorldType() == WorldType.REALM) {
+                        Location target = world.getSpawnLocation();
+                        Location lastLocation = survivalPlayer.getLastLocation();
+                        if (lastLocation != null) {
+                            lastLocation.setWorld(target.getWorld());
+                            target = lastLocation;
+                        }
                         player.teleport(lastLocation);
                     }
                 });
