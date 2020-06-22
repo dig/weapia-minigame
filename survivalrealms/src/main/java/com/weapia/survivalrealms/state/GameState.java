@@ -1,11 +1,14 @@
 package com.weapia.survivalrealms.state;
 
 import com.google.inject.Inject;
+import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.config.WorldConfiguration;
 import com.weapia.survivalrealms.world.WorldManager;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
+import net.sunken.core.util.ActionBar;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -33,6 +36,9 @@ public class GameState extends EventGameState {
 
     @Override
     public void tick(int tickCount) {
+        if (tickCount % 20 == 0 && worldConfiguration.isAdventure()) {
+            Bukkit.getOnlinePlayers().forEach(player -> ActionBar.sendMessage(player, Constants.WORLD_RESOURCE_NO_BUILD));
+        }
     }
 
     @Override

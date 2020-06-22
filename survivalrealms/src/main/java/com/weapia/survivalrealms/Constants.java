@@ -11,6 +11,7 @@ public class Constants {
     public final static String WORLD_RESOURCE = ChatColor.RED + "Resource";
     public final static String WORLD_REALM = ChatColor.GREEN + "Realm";
     public final static String WORLD_SPAWN = ChatColor.YELLOW + "Spawn";
+    public final static String WORLD_RESOURCE_NO_BUILD = ChatColor.RED + "RESOURCE WORLD: No Building.";
 
     public final static int ECONOMY_STARTING_AMOUNT = 500;
     public final static String ECONOMY_TYPE = ChatColor.GOLD + Symbol.LARGE_DOT;
