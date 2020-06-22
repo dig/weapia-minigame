@@ -8,7 +8,7 @@ public class Constants {
     public final static String CHAT_OVER_MAX_LENGTH = ChatColor.RED + "You cannot type this message as its over the 256 limit.";
 
     public final static String WORLD_UNLOAD = ChatColor.RED + "The world you were in has been unloaded due to the owner being offline.";
-    public final static String WORLD_RESOURCE = ChatColor.GOLD + "Resource";
+    public final static String WORLD_RESOURCE = ChatColor.RED + "Resource";
     public final static String WORLD_REALM = ChatColor.GREEN + "Realm";
 
     public final static String ECONOMY_TYPE = ChatColor.GOLD + Symbol.LARGE_DOT;

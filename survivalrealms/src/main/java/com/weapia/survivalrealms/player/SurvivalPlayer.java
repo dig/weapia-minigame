@@ -56,13 +56,13 @@ public class SurvivalPlayer extends CorePlayer {
             scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
             scoreboard.createEntry("Spacer2", ChatColor.GREEN + " ", 8);
 
-            scoreboard.createEntry("WorldTitle", ChatColor.WHITE + "World", 7);
-            scoreboard.createEntry("WorldValue", worldConfiguration.isAdventure() ? Constants.WORLD_RESOURCE : Constants.WORLD_REALM, 6);
-            scoreboard.createEntry("Spacer3", ChatColor.GOLD + " ", 5);
+            scoreboard.createEntry("CoinTitle", ChatColor.WHITE + "Coins", 7);
+            scoreboard.createEntry("CoinValue", String.format(Constants.ECONOMY_TYPE_AMOUNT, coins), 6);
+            scoreboard.createEntry("Spacer3", ChatColor.BLACK + " ", 5);
 
-            scoreboard.createEntry("CoinTitle", ChatColor.WHITE + "Coins", 4);
-            scoreboard.createEntry("CoinValue", String.format(Constants.ECONOMY_TYPE_AMOUNT, coins), 3);
-            scoreboard.createEntry("Spacer4", ChatColor.BLACK + " ", 2);
+            scoreboard.createEntry("WorldTitle", ChatColor.WHITE + "World", 4);
+            scoreboard.createEntry("WorldValue", worldConfiguration.isAdventure() ? Constants.WORLD_RESOURCE : Constants.WORLD_REALM, 3);
+            scoreboard.createEntry("Spacer4", ChatColor.GOLD + " ", 2);
         });
 
         if (!worldConfiguration.isAdventure()) {
