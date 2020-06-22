@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.player;
 
+import com.weapia.survivalrealms.Constants;
 import com.weapia.survivalrealms.config.WorldConfiguration;
 import lombok.Getter;
 import lombok.NonNull;
@@ -51,24 +52,31 @@ public class SurvivalPlayer extends CorePlayer {
         player.getInventory().clear();
 
         setScoreboard(player, scoreboard -> {
-            scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 5);
-            scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 4);
-            scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 3);
-            scoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 2);
+            scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 8);
+
+            scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 7);
+            scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 6);
+            scoreboard.createEntry("Spacer2", ChatColor.GREEN + " ", 5);
+
+            scoreboard.createEntry("CoinTitle", ChatColor.WHITE + "Coin", 4);
+            scoreboard.createEntry("CoinValue", String.format(Constants.ECONOMY_TYPE_AMOUNT, coins), 3);
+            scoreboard.createEntry("Spacer3", ChatColor.BLACK + " ", 2);
         });
 
         // teleport to last location
-        Location spawn = worldConfiguration.getSpawn().toLocation();
-        if (forwarder != null && worldType != null) {
-            if (forwarder == Forwarder.SPAWN) {
-                player.teleport(worldConfiguration.getSpawn().toLocation());
-                forwarder = Forwarder.NONE;
-            } else if (forwarder == Forwarder.NONE && worldType == WorldType.SPAWN) {
-                lastLocation.setWorld(spawn.getWorld());
-                player.teleport(lastLocation);
+        if (!worldConfiguration.isAdventure()) {
+            Location spawn = worldConfiguration.getSpawn().toLocation();
+            if (forwarder != null && worldType != null) {
+                if (forwarder == Forwarder.SPAWN) {
+                    player.teleport(worldConfiguration.getSpawn().toLocation());
+                    forwarder = Forwarder.NONE;
+                } else if (forwarder == Forwarder.NONE && worldType == WorldType.SPAWN) {
+                    lastLocation.setWorld(spawn.getWorld());
+                    player.teleport(lastLocation);
+                }
+            } else {
+                player.teleport(spawn);
             }
-        } else {
-            player.teleport(spawn);
         }
     }
 
