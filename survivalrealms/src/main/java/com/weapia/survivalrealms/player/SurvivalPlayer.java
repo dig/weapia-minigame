@@ -73,7 +73,7 @@ public class SurvivalPlayer extends CorePlayer {
         scoreboard.createEntry("Spacer3", ChatColor.BLACK + " ", 5);
 
         scoreboard.createEntry("WorldTitle", ChatColor.WHITE + "World", 4);
-        scoreboard.createEntry("WorldValue", worldConfiguration.isAdventure() ? Constants.WORLD_RESOURCE : Constants.WORLD_REALM, 3);
+        scoreboard.createEntry("WorldValue", worldConfiguration.isAdventure() ? Constants.WORLD_RESOURCE : (worldType == WorldType.REALM ? Constants.WORLD_REALM : Constants.WORLD_SPAWN), 3);
         scoreboard.createEntry("Spacer4", ChatColor.GOLD + " ", 2);
         return true;
     }

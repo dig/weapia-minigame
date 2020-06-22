@@ -66,7 +66,7 @@ public class GameState extends EventGameState {
 
     @Override
     public boolean canPlace(Player player, Block block) {
-        return player.getWorld().getName().equals(player.getUniqueId().toString());
+        return worldConfiguration.isAdventure() || player.getWorld().getName().equals(player.getUniqueId().toString());
     }
 
     @Override
