@@ -62,7 +62,7 @@ public class SurvivalPlayer extends CorePlayer {
 
         if (!worldConfiguration.isAdventure()) {
             Location target = worldConfiguration.getSpawn().toLocation();
-            if (lastLocation != null) {
+            if (worldType == WorldType.SPAWN && lastLocation != null) {
                 lastLocation.setWorld(target.getWorld());
                 target = lastLocation;
             }
