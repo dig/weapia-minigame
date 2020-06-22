@@ -32,8 +32,8 @@ public class SpawnCommand extends BukkitCommand {
             if (worldConfiguration.isAdventure()) {
                 if (survivalPlayer.getWorldType() != WorldType.SPAWN) {
                     survivalPlayer.setLastLocation(null);
+                    survivalPlayer.setWorldType(WorldType.SPAWN);
                 }
-                survivalPlayer.setWorldType(WorldType.SPAWN);
                 AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(survivalPlayer.getUuid(), Server.Type.INSTANCE, Game.SURVIVAL_REALMS, true)));
             } else {
                 survivalPlayer.toPlayer().ifPresent(player -> player.teleport(worldConfiguration.getSpawn().toLocation()));

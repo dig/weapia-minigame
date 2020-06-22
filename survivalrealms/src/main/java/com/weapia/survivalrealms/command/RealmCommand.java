@@ -38,8 +38,8 @@ public class RealmCommand extends BukkitCommand {
             if (worldConfiguration.isAdventure() || !worldManager.hasWorld(survivalPlayer.getUuid())) {
                 if (survivalPlayer.getWorldType() != WorldType.REALM) {
                     survivalPlayer.setLastLocation(null);
+                    survivalPlayer.setWorldType(WorldType.REALM);
                 }
-                survivalPlayer.setWorldType(WorldType.REALM);
                 AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(survivalPlayer.getUuid(), Server.Type.INSTANCE, Game.SURVIVAL_REALMS, true)));
             } else {
                 World world = worldManager.getWorld(survivalPlayer.getUuid());
