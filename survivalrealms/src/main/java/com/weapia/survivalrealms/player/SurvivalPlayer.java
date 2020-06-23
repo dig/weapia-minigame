@@ -58,7 +58,7 @@ public class SurvivalPlayer extends CorePlayer {
 
         player.getInventory().clear();
         if (lastPlayerState != null) {
-            MongoBukkitUtil.setPlayer(player, lastPlayerState);
+            MongoBukkitUtil.setPlayer(lastPlayerState, player);
         }
 
         Location target;
