@@ -90,7 +90,10 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-        Constants.JOIN_MESSAGE.forEach(s -> player.sendMessage(s));
+        playerManager.get(player.getUniqueId())
+                .map(SurvivalPlayer.class::cast)
+                .filter(SurvivalPlayer::isFirstJoin)
+                .ifPresent(survivalPlayer -> Constants.FIRST_JOIN_MESSAGE.forEach(s -> player.sendMessage(s)));
     }
 
     @Override

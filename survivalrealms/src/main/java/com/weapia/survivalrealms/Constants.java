@@ -8,10 +8,11 @@ import java.util.List;
 
 public class Constants {
 
-    public final static List<String> JOIN_MESSAGE = Arrays.asList(
+    public final static List<String> FIRST_JOIN_MESSAGE = Arrays.asList(
             " ",
-            ChatColor.GREEN + "" + ChatColor.BOLD + " SURVIVAL REALMS",
-            ChatColor.YELLOW + " Type /realm to get started with a private realm.",
+            ChatColor.GREEN + "" + ChatColor.BOLD + " SURVIVAL REALMS " + ChatColor.AQUA + "Weapia Original",
+            ChatColor.YELLOW + " " + Symbol.PICK + " Type /realm to get started with a private realm.",
+            ChatColor.WHITE + " " + Symbol.ALERT + " Type /help to find Help / Common Questions.",
             " "
     );
 

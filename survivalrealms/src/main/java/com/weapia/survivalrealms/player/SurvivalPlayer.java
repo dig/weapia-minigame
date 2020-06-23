@@ -38,6 +38,8 @@ public class SurvivalPlayer extends CorePlayer {
     private String worldLoadedInstance;
     @Getter @Setter
     private int coins;
+    @Getter
+    private boolean firstJoin;
 
     public SurvivalPlayer(UUID uuid, String username, ScoreboardRegistry scoreboardRegistry, PluginInform pluginInform, WorldConfiguration worldConfiguration) {
         super(uuid, username, scoreboardRegistry, pluginInform);
@@ -50,6 +52,7 @@ public class SurvivalPlayer extends CorePlayer {
         this.lastPlayerState = null;
         this.worldLoadedInstance = null;
         this.coins = Constants.ECONOMY_STARTING_AMOUNT;
+        this.firstJoin = false;
     }
 
     @Override
@@ -110,6 +113,8 @@ public class SurvivalPlayer extends CorePlayer {
             lastPlayerState = (Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_PLAYER_KEY);
             worldLoadedInstance = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY);
             coins = doc.getInteger(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, Constants.ECONOMY_STARTING_AMOUNT);
+        } else {
+            firstJoin = true;
         }
         return true;
     }
