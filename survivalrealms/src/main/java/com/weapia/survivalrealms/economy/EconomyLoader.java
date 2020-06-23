@@ -18,8 +18,4 @@ public class EconomyLoader implements Facet, Enableable {
     public void enable() {
         plugin.getServer().getServicesManager().register(Economy.class, economy, plugin, ServicePriority.High);
     }
-
-    @Override
-    public void disable() {
-    }
 }

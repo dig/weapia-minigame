@@ -46,8 +46,4 @@ public class ChatHandler extends PacketHandler<PlayerChatPacket> implements Face
     public void enable() {
         packetHandlerRegistry.registerHandler(PlayerChatPacket.class, this);
     }
-
-    @Override
-    public void disable() {
-    }
 }

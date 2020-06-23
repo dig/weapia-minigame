@@ -31,7 +31,7 @@ import java.util.logging.*;
 
 @Log
 @Singleton
-public class WorldManager implements Facet, Enableable, Listener {
+public class WorldManager implements Facet, Enableable, Disableable, Listener {
 
     @Inject
     private JavaPlugin plugin;
