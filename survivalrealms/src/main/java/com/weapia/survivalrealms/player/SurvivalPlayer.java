@@ -33,7 +33,7 @@ public class SurvivalPlayer extends CorePlayer {
     @Getter @Setter
     private Location lastLocation;
 
-    private Document lastInventory;
+    private Document lastPlayerState;
     @Getter
     private String worldLoadedInstance;
     @Getter @Setter
@@ -47,7 +47,7 @@ public class SurvivalPlayer extends CorePlayer {
         this.worldType = WorldType.SPAWN;
         this.lastLocation = null;
 
-        this.lastInventory = null;
+        this.lastPlayerState = null;
         this.worldLoadedInstance = null;
         this.coins = Constants.ECONOMY_STARTING_AMOUNT;
     }
@@ -57,8 +57,8 @@ public class SurvivalPlayer extends CorePlayer {
         super.setup(player);
 
         player.getInventory().clear();
-        if (lastInventory != null) {
-            MongoBukkitUtil.inventory(lastInventory, player.getInventory());
+        if (lastPlayerState != null) {
+            MongoBukkitUtil.setPlayer(player, lastPlayerState);
         }
 
         Location target;
@@ -104,10 +104,10 @@ public class SurvivalPlayer extends CorePlayer {
             adventureType = (AdventureType) MongoUtil.getEnumOrDefault(doc, AdventureType.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY, AdventureType.OVERWORLD);
             worldType = (WorldType) MongoUtil.getEnumOrDefault(doc, WorldType.class, DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, WorldType.SPAWN);
             if (doc.containsKey(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY)) {
-                lastLocation = MongoBukkitUtil.location((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY), false);
+                lastLocation = MongoBukkitUtil.toLocation((Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY));
             }
 
-            lastInventory = (Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INVENTORY_KEY);
+            lastPlayerState = (Document) doc.get(DatabaseHelper.PLAYER_SURVIVAL_REALMS_PLAYER_KEY);
             worldLoadedInstance = doc.getString(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INSTANCE_KEY);
             coins = doc.getInteger(DatabaseHelper.PLAYER_SURVIVAL_REALMS_COINS_KEY, Constants.ECONOMY_STARTING_AMOUNT);
         }
@@ -124,18 +124,17 @@ public class SurvivalPlayer extends CorePlayer {
             document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY,
                     player.getLocation().getWorld().equals(worldConfiguration.getSpawn().toLocation().getWorld()) ? WorldType.SPAWN.toString() : WorldType.REALM.toString())
                     .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY, adventureType.toString())
-                    .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(player.getLocation(), false));
+                    .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.fromLocation(player.getLocation(), false));
         } else {
             World world = player.getLocation().getWorld();
             document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_WORLD_KEY, worldType.toString())
                     .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY, world.getName().equals("world") ? AdventureType.OVERWORLD.toString() : AdventureType.NETHER.toString());
             if (lastLocation != null) {
-                document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.location(lastLocation, false));
+                document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_LOCATION_KEY, MongoBukkitUtil.fromLocation(lastLocation, false));
             }
         }
 
-        document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_INVENTORY_KEY, MongoBukkitUtil.inventory(player.getInventory()));
-
+        document.append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_PLAYER_KEY, MongoBukkitUtil.fromPlayer(player, false, false));
         return super.toDocument(player)
                 .append(DatabaseHelper.PLAYER_SURVIVAL_REALMS_KEY, document);
     }
