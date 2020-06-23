@@ -6,7 +6,7 @@ import com.weapia.survivalrealms.player.SurvivalPlayer;
 import net.sunken.common.command.Command;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.core.command.BukkitCommand;
 import org.bukkit.command.CommandSender;
 

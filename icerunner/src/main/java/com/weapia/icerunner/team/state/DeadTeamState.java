@@ -2,7 +2,7 @@ package com.weapia.icerunner.team.state;
 
 import com.google.inject.Inject;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.core.engine.state.PlayerSpectatorState;
 import net.sunken.core.engine.state.impl.BaseTeamState;
 import net.sunken.core.player.CorePlayer;

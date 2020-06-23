@@ -9,7 +9,6 @@ import net.minecraft.server.v1_15_R1.*;
 import net.sunken.common.config.*;
 import net.sunken.common.inject.*;
 import net.sunken.common.player.*;
-import net.sunken.common.player.module.*;
 import net.sunken.common.util.*;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.*;
