@@ -146,7 +146,6 @@ public class GameState extends EventGameState {
         Player player = event.getPlayer();
         if (!worldConfiguration.isAdventure()) {
             event.setCancelled(true);
-            player.sendMessage("sending");
             playerManager.get(player.getUniqueId())
                     .map(SurvivalPlayer.class::cast)
                     .ifPresent(survivalPlayer -> {
