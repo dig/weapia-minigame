@@ -10,7 +10,8 @@ public class Constants {
 
     public final static List<String> FIRST_JOIN_MESSAGE = Arrays.asList(
             " ",
-            ChatColor.GREEN + "" + ChatColor.BOLD + " SURVIVAL REALMS " + ChatColor.AQUA + "Weapia Original",
+            ChatColor.GREEN + "" + ChatColor.BOLD + " SURVIVAL REALMS",
+            ChatColor.AQUA + " " + Symbol.HEART + " By Weapia",
             ChatColor.YELLOW + " " + Symbol.PICK + " Type /realm to get started with a private realm.",
             ChatColor.WHITE + " " + Symbol.ALERT + " Type /help to find Help / Common Questions.",
             " "
