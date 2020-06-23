@@ -106,7 +106,8 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
 
     @Override
     public boolean canSpawnStructure(BiomeBase biomeBase, StructureGenerator<? extends WorldGenFeatureConfiguration> structureGenerator) {
-        return parent.canSpawnStructure(biomeBase, structureGenerator);
+        // return parent.canSpawnStructure(biomeBase, structureGenerator);
+        return false;
     }
 
     @Override
@@ -136,12 +137,7 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
 
     @Override
     public void createStructures(BiomeManager biomemanager, IChunkAccess ichunkaccess, ChunkGenerator<?> chunkgenerator, DefinedStructureManager definedstructuremanager) {
-        int chunkX = ichunkaccess.getPos().x;
-        int chunkZ = ichunkaccess.getPos().z;
-
-        if (chunkX == 0 && chunkZ == 0) {
-            parent.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
-        }
+        // parent.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
     }
 
     @Override
