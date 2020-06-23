@@ -3,7 +3,17 @@ package com.weapia.survivalrealms;
 import net.sunken.common.util.Symbol;
 import org.bukkit.ChatColor;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Constants {
+
+    public final static List<String> JOIN_MESSAGE = Arrays.asList(
+            " ",
+            ChatColor.GREEN + "" + ChatColor.BOLD + " SURVIVAL REALMS",
+            ChatColor.YELLOW + " Type /realm to get started with a private realm.",
+            " "
+    );
 
     public final static String CHAT_OVER_MAX_LENGTH = ChatColor.RED + "You cannot type this message as its over the 256 limit.";
 

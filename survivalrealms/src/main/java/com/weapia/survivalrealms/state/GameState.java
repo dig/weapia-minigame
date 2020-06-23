@@ -90,6 +90,7 @@ public class GameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
+        Constants.JOIN_MESSAGE.forEach(s -> player.sendMessage(s));
     }
 
     @Override
