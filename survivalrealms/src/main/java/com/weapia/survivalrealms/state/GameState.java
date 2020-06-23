@@ -13,6 +13,7 @@ import net.sunken.common.server.Server;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
+import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.npc.NPC;
 import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.npc.config.InteractionConfiguration;
@@ -42,6 +43,8 @@ public class GameState extends EventGameState {
     private NPCRegistry npcRegistry;
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
+    @Inject
+    private BukkitSyncExecutor bukkitSyncExecutor;
 
     @Override
     public void start(BaseGameState previous) {
@@ -62,10 +65,11 @@ public class GameState extends EventGameState {
                                 npcInteraction = new QueueInteraction(Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
                                         Game.valueOf(interactionConfiguration.getValues().get(1)),
                                         Boolean.valueOf(interactionConfiguration.getValues().get(2)),
-                                        packetUtil);
+                                        packetUtil,
+                                        false);
                                 break;
                             case COMMAND:
-                                npcInteraction = new CommandInteraction(interactionConfiguration.getValues().get(0));
+                                npcInteraction = new CommandInteraction(interactionConfiguration.getValues().get(0), bukkitSyncExecutor);
                                 break;
                         }
                         npc.setInteraction(npcInteraction);
