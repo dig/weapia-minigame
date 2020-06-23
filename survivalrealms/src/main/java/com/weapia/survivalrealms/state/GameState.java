@@ -13,6 +13,13 @@ import net.sunken.common.server.Server;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
+import net.sunken.core.npc.NPC;
+import net.sunken.core.npc.NPCRegistry;
+import net.sunken.core.npc.config.InteractionConfiguration;
+import net.sunken.core.npc.interact.CommandInteraction;
+import net.sunken.core.npc.interact.MessageInteraction;
+import net.sunken.core.npc.interact.NPCInteraction;
+import net.sunken.core.npc.interact.QueueInteraction;
 import net.sunken.core.util.ActionBar;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,11 +38,39 @@ public class GameState extends EventGameState {
 
     @Inject
     private WorldManager worldManager;
+    @Inject
+    private NPCRegistry npcRegistry;
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
 
     @Override
     public void start(BaseGameState previous) {
+        if (!worldConfiguration.isAdventure()) {
+            worldConfiguration.getNpcConfigurations()
+                    .forEach(npcConfiguration -> {
+                        NPC npc = npcRegistry.register(
+                                npcConfiguration.getId(), npcConfiguration.getDisplayName(), npcConfiguration.getLocationConfiguration().toLocation(),
+                                npcConfiguration.getSkinConfiguration().getTexture(), npcConfiguration.getSkinConfiguration().getSignature());
+
+                        NPCInteraction npcInteraction = null;
+                        InteractionConfiguration interactionConfiguration = npcConfiguration.getInteractionConfiguration();
+                        switch (interactionConfiguration.getType()) {
+                            case MESSAGE:
+                                npcInteraction = new MessageInteraction(interactionConfiguration.getValues());
+                                break;
+                            case QUEUE:
+                                npcInteraction = new QueueInteraction(Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
+                                        Game.valueOf(interactionConfiguration.getValues().get(1)),
+                                        Boolean.valueOf(interactionConfiguration.getValues().get(2)),
+                                        packetUtil);
+                                break;
+                            case COMMAND:
+                                npcInteraction = new CommandInteraction(interactionConfiguration.getValues().get(0));
+                                break;
+                        }
+                        npc.setInteraction(npcInteraction);
+                    });
+        }
     }
 
     @Override
