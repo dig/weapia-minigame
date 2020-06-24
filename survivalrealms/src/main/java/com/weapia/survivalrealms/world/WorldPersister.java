@@ -1,6 +1,5 @@
 package com.weapia.survivalrealms.world;
 
-import com.google.common.collect.Lists;
 import com.google.inject.*;
 import com.mongodb.client.*;
 import com.mongodb.client.gridfs.*;
@@ -12,7 +11,6 @@ import org.bson.*;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -62,10 +60,7 @@ public class WorldPersister {
                         .append("version", newVersion));
         worldBucket.uploadFromStream(worldFileName, streamToUploadFrom, options);
 
-        for (GridFSFile oldWorld : oldWorlds) {
-            worldBucket.delete(oldWorld.getObjectId());
-        }
-
+        oldWorlds.forEach(oldWorld -> worldBucket.delete(oldWorld.getObjectId()));
         FileUtil.deleteDirectory(worldFolder);
         worldZip.delete();
     }
