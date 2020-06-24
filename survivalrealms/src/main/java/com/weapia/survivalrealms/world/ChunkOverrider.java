@@ -1,5 +1,6 @@
 package com.weapia.survivalrealms.world;
 
+import com.weapia.survivalrealms.Constants;
 import net.minecraft.server.v1_15_R1.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -63,7 +64,7 @@ public class ChunkOverrider<C extends GeneratorSettingsDefault> extends ChunkGen
         int chunkX = iChunkAccess.getPos().x;
         int chunkZ = iChunkAccess.getPos().z;
 
-        if ((chunkX <= -1 || chunkX >= 1) || (chunkZ <= -1 || chunkZ >= 1)) {
+        if ((chunkX <= -Constants.WORLD_REALM_SIZE || chunkX >= Constants.WORLD_REALM_SIZE) || (chunkZ <= -Constants.WORLD_REALM_SIZE || chunkZ >= Constants.WORLD_REALM_SIZE)) {
             org.bukkit.generator.ChunkGenerator.ChunkData chunkData = new CustomChunkData(bukkitWorld);
             chunkData.setRegion(0, 0, 0, 16, 256, 16, org.bukkit.Material.AIR);
 
