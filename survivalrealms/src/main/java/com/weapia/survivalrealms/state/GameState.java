@@ -109,11 +109,15 @@ public class GameState extends EventGameState {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        Location target = worldConfiguration.getSpawn().toLocation();
-        if (worldManager.hasWorld(uuid)) {
-            target = worldManager.getWorld(uuid).getSpawnLocation();
+        if (!worldConfiguration.isAdventure()) {
+            Location target = worldConfiguration.getSpawn().toLocation();
+            if (worldManager.hasWorld(uuid)) {
+                target = worldManager.getWorld(uuid).getSpawnLocation();
+            }
+            event.setRespawnLocation(target);
+        } else {
+            event.setRespawnLocation(player.getWorld().getSpawnLocation());
         }
-        event.setRespawnLocation(target);
     }
 
     @Override
