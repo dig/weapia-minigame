@@ -44,7 +44,7 @@ public class WorldManager implements Facet, Enableable, Disableable, Listener {
     @Inject @InjectConfig
     private WorldConfiguration worldConfiguration;
 
-    private static final long UNLOAD_AFTER_TICKS_OFFLINE = Ticks.from(30, TimeUnit.MINUTES);
+    private static final long UNLOAD_AFTER_TICKS_OFFLINE = Ticks.from(10, TimeUnit.MINUTES);
 
     private final Set<UUID> loadingWorlds = new HashSet<>();
     private final Map<UUID, World> loadedWorlds = new HashMap<>();
