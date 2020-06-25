@@ -5,11 +5,10 @@ import com.weapia.survivalrealms.command.AdventureCommand;
 import com.weapia.survivalrealms.command.RealmCommand;
 import com.weapia.survivalrealms.command.SpawnCommand;
 import com.weapia.survivalrealms.config.WorldConfiguration;
-import com.weapia.survivalrealms.economy.EconomyLoader;
 import com.weapia.survivalrealms.economy.EconomyModule;
 import com.weapia.survivalrealms.world.*;
 import net.sunken.common.config.ConfigModule;
-import net.sunken.common.inject.PluginFacetBinder;
+import net.sunken.common.inject.FacetBinder;
 import net.sunken.core.CoreModule;
 import net.sunken.core.engine.EngineModule;
 import net.sunken.core.inject.PluginModule;
@@ -32,10 +31,10 @@ public class SurvivalRealmsPluginModule extends PluginModule {
         install(new WorldModule());
         install(new EconomyModule());
 
-        final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(ChatHandler.class);
-        pluginFacetBinder.addBinding(SpawnCommand.class);
-        pluginFacetBinder.addBinding(AdventureCommand.class);
-        pluginFacetBinder.addBinding(RealmCommand.class);
+        final FacetBinder facetBinder = new FacetBinder(binder());
+        facetBinder.addBinding(ChatHandler.class);
+        facetBinder.addBinding(SpawnCommand.class);
+        facetBinder.addBinding(AdventureCommand.class);
+        facetBinder.addBinding(RealmCommand.class);
     }
 }
