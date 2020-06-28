@@ -1,5 +1,5 @@
 name: SurvivalRealms
 main: com.weapia.survivalrealms.SurvivalRealms
 version: 1.0
-depend: [ProtocolLib]
+depend: [ProtocolLib, Vault]
 api-version: 1.15

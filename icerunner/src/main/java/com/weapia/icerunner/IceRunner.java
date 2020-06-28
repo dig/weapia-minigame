@@ -24,5 +24,4 @@ public class IceRunner extends Core {
 
         pluginInform.setState(Server.State.OPEN);
     }
-
 }

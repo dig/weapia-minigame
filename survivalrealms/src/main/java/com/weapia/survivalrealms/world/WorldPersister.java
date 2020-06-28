@@ -1,0 +1,87 @@
+package com.weapia.survivalrealms.world;
+
+import com.google.inject.*;
+import com.mongodb.client.*;
+import com.mongodb.client.gridfs.*;
+import com.mongodb.client.gridfs.model.*;
+import lombok.extern.java.Log;
+import net.sunken.common.database.*;
+import net.sunken.common.util.*;
+import org.bson.*;
+import org.zeroturnaround.zip.ZipUtil;
+
+import java.io.*;
+import java.util.*;
+
+import static com.mongodb.client.model.Filters.eq;
+
+@Log
+@Singleton
+public class WorldPersister {
+
+    private final MongoDatabase mainDatabase;
+    private final GridFSBucket worldBucket;
+
+    @Inject
+    WorldPersister(MongoConnection mongoConnection) {
+        this.mainDatabase = mongoConnection.getDatabase(DatabaseHelper.DATABASE_MAIN);
+        this.worldBucket = GridFSBuckets.create(mainDatabase, DatabaseHelper.GRIDFS_BUCKET_SURVIVAL_REALMS);
+    }
+
+    // be warned, this is live
+    private GridFSFindIterable findWorlds(UUID playerUUID) {
+        return worldBucket.find(eq("metadata.playerUUID", playerUUID.toString()));
+    }
+
+    private GridFSFile getLatestWorld(GridFSFindIterable worlds) {
+        return worlds.sort(new Document("metadata.version", 1)).first();
+    }
+
+    private int getVersion(GridFSFile world) {
+        return world.getMetadata().getInteger("version");
+    }
+
+    public void persistWorld(UUID playerUUID, File worldFolder) throws IOException {
+        GridFSFindIterable worlds = findWorlds(playerUUID);
+        GridFSFile latestWorld = getLatestWorld(worlds);
+        int newVersion = latestWorld == null ? 0 : getVersion(latestWorld) + 1;
+
+        List<GridFSFile> oldWorlds = new ArrayList<>();
+        worlds.into(oldWorlds);
+
+        String worldFileName = playerUUID.toString();
+        File worldZip = new File(worldFolder.getParent() + File.separator + worldFileName + ".zip");
+        ZipUtil.pack(worldFolder, worldZip);
+
+        InputStream streamToUploadFrom = new FileInputStream(worldZip);
+        GridFSUploadOptions options = new GridFSUploadOptions()
+                .chunkSizeBytes(358400)
+                .metadata(new Document("playerUUID", worldFileName)
+                        .append("version", newVersion));
+        worldBucket.uploadFromStream(worldFileName, streamToUploadFrom, options);
+
+        oldWorlds.forEach(oldWorld -> worldBucket.delete(oldWorld.getObjectId()));
+        FileUtil.deleteDirectory(worldFolder);
+        worldZip.delete();
+    }
+
+    public void downloadWorld(UUID playerUUID, File targetFolder) throws IOException {
+        GridFSFindIterable worlds = findWorlds(playerUUID);
+        GridFSFile latestWorld = getLatestWorld(worlds);
+
+        if (latestWorld != null) {
+            String worldFileName = playerUUID.toString();
+            File worldZip = new File(targetFolder.getPath() + File.separator + worldFileName + ".zip");
+            File worldFolder = new File(targetFolder.getPath() + File.separator + worldFileName);
+
+            FileOutputStream streamToDownloadTo = new FileOutputStream(worldZip);
+            worldBucket.downloadToStream(latestWorld.getObjectId(), streamToDownloadTo);
+            streamToDownloadTo.close();
+
+            if (worldZip.exists()) {
+                ZipUtil.unpack(worldZip, worldFolder);
+                worldZip.delete();
+            }
+        }
+    }
+}
